@@ -1,0 +1,43 @@
+/* Welcome to Compass. Use this file to write IE specific override styles.
+ * Import this file using the following HTML or equivalent:
+ *  兼容性设置样式
+ */
+@import "compass/css3";
+@import "compass/css3/box";
+@import "compass/css3/flexbox";
+@import "compass/utilities";
+
+.position_car{
+  background: white;
+  width: 30%;
+  position: absolute;
+  top: 20px;
+  left: 100px;
+  z-index: 100;
+}
+.unclaimed-hint{
+  position: absolute;
+  z-index: 100;
+  bottom: auto;
+  right: 10px;
+  top: 50px;
+  left: auto;
+  cursor: pointer;
+}
+
+.unclaimed-section{
+  position: absolute;
+  z-index: 101;
+  right: 0;
+  top: 0;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(255,255,255,1);
+  @include box-sizing(border-box);
+  @include transform(translate(100%,0));
+  @include transition(transform .3s cubic-bezier(0.165,.84,.44,1));
+  @include opacity(0.9);
+  &.show{
+    @include transform(translate(0,0));
+  }
+}

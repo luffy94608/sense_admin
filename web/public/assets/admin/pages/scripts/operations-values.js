@@ -1,0 +1,53 @@
+/**
+ * Created by rinal on 10/28/15.
+ */
+
+var operationsController = {
+    'AccountController' : '权限管理',
+    'BaiduController' : '百度',
+    'CompanyController' : '企业管理',
+    'IndexController' : '登录',
+    'MessageController' : '通知管理',
+    'MonitorController' : '车辆状态查询',
+    'OperationsController' : '操作日志',
+    'PathController' : '线路管理',
+    'PayController' : '退票管理',
+    'StatisticeController' : '数据统计',
+    'UserController' : '用户相关'
+};
+var operationsAction = {
+    'updateUserAjaxAction' : '更新用户',
+    'updateRoleAjaxAction' : '更新角色',
+    'updatePrivilegeAjaxAction' : '更新模块',
+    'deleteAjaxAction' : '删除用户或权限或角色',
+    'updateCompanyAjaxAction' : '更新企业',
+    'deleteCompanyAjaxAction' : '删除企业',
+    'updateAdminAjaxAction' : '更新企业管理员',
+    'deleteAdminAjaxAction' : '删除企业管理员',
+    'checkPasswordAction' : '登录',
+    'resetPasswordAjaxAction' : '修改密码',
+    'sendMessageAction' : '发送通知',
+    'sendRewardAjaxAction' : '发送奖励',
+    'replyUserAjaxAction' : '回复用户',
+    'saveDriverAction' : '更新司机',
+    'setPathEnableAction' : '激活线路',
+    'setPathEnableAction' : '激活线路',
+    'setPathUnableAction' : '关闭线路',
+    'insertPathAction' : '插入线路(堪探)',
+    'saveCarAction' : '更新车辆',
+    'updateBusPathAction' : '更新线路',
+    'insertBusPathAction' : '插入线路(废弃)',
+    'delStationAction' : '删除站点(废弃)',
+    'saveTourLineAction' : '更新旅游线路',
+    'activetourAction' : '激活旅游线路',
+    'totopAction' : '置顶旅游线路',
+    'pathToTopAction' : '置顶线路',
+    'pathChanceTopAction' : '取消置顶线路',
+    'createschedulePathAction' : '调度',
+    'updatVotePathAction' : '更新招募线路',
+    'activeVoteAction' : '激活招募线路',
+    'setUnlockSeatsAction' : '锁座',
+    'setLastReserveDayAction' : '设置月票截止日期',
+    'setMonthlyPriceRuleAction' : '设置月票阶梯价格',
+    'refundCashAction' : '退款',
+}

@@ -1,0 +1,126 @@
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet box black">
+                <div class="portlet-title ">
+                    <div class="caption">
+                        <!--        <i class="fa fa-globe"></i>-->
+                        管理员设置
+                    </div>
+                    <div class="actions">
+                        <a href="javascript:;" class="btn btn-default btn-sm js_edit">
+                            <i class="fa fa-pencil"></i> 添加管理员
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body" >
+<!--                    <div class="table-toolbar">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-6">-->
+<!--                                <div class="btn-group">-->
+<!--                                    <button  class="btn green js_edit" >-->
+<!--                                        添加管理员  <i class="fa fa-plus"></i>-->
+<!--                                    </button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <table class="table table-striped table-bordered table-hover" id="account_table_1">
+                        <thead>
+                        <tr>
+                            <th>账号</th>
+                            <th>姓名</th>
+                            <th>手机</th>
+                            <th>企业名称</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $list=$this->adminList;
+                        if(!empty($list))
+                        {
+                            $str='';
+                            foreach($list as $v)
+                            {
+                                $str.="
+                                <tr class='odd gradeX'>
+                                    <td>{$v['account']}</td>
+                                    <td> {$v['name']}</td>
+                                    <td>{$v['phone']}</td>
+                                    <td>{$v['company_name']}</td>
+                                    <td class='center'>".date('Y-m-d H:i:s',$v['time'])."</td>
+                                    <td>
+                                        <button type='button' class='btn margin-5 blue js_edit' data-json='".json_encode($v)."' data-edit='1'  >修改</button>
+                                        <button type='button' class='btn margin-5 red js_delete' data-id='{$v['id']}'>删除</button>
+                                    </td>
+                                </tr>";
+                            }
+                            echo $str;
+                        }
+                        ?>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>
+
+<!--修改用户信息modal-->
+<div class="modal fade modal-scroll" id="editUserInfoModal" >
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close " data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">添加管理员</h4>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">账号（邮箱）:</label>
+                    <input type="text" class="form-control" id="eui-account" placeholder="请输入邮箱">
+                </div>
+                <div class="form-group">
+                    <label for="message-text" class="control-label">密码:</label>
+                    <input type="password" class="form-control" id="eui-password">
+                </div>
+                <div class="form-group">
+                    <label for="message-text" class="control-label">姓名:</label>
+                    <input type="text" class="form-control" id="eui-name">
+                </div>
+                <div class="form-group">
+                    <label for="message-text" class="control-label">电话:</label>
+                    <input type="text" class="form-control" id="eui-mobile">
+                </div>
+                <div class="form-group ">
+                    <label for="message-text" class="control-label">所属企业:</label>
+                    <select class="form-control" id="eui-company">
+                        <option value="">请选择所属企业</option>
+                        <?php
+                        $companyList=$this->companyList;
+                        if(!empty($companyList))
+                        {
+                            $str='';
+                            foreach($companyList as $v2)
+                            {
+                                $str.="
+                                        <option value='{$v2['id']}'>{$v2['name']}</option>
+                                    ";
+                            }
+                            echo $str;
+                        }
+                        ?>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id="eui-confirm">提交</button>
+        </div>
+    </div>
+</div>

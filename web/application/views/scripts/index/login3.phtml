@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8"/>
+    <title>管理后台</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1,user-scalable=no" name="viewport"/>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/assets/global/plugins/select2/select2.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/admin/pages/css/login3.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css"/>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <!-- BEGIN THEME STYLES -->
+    <link href="/assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="/assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/admin/layout/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+    <link href="/assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="login">
+<!-- BEGIN LOGO -->
+<div class="logo">
+<!--    <img src="/images/logo.jpg" width="27" height="27"  alt="" style="position: relative;top: -3px;margin-right: 5px;border-radius: 2px!important;box-shadow: 0 0 6px #1B1B1B;" />-->
+    <a href="javascript:;" style="font-size: 20px;font-weight: bold;color: #fff;">
+        管理后台
+    </a>
+</div>
+<!-- END LOGO -->
+<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+<div class="menu-toggler sidebar-toggler">
+</div>
+<!-- END SIDEBAR TOGGLER BUTTON -->
+<!-- BEGIN LOGIN -->
+<div class="content">
+<!-- BEGIN LOGIN FORM -->
+<form class="login-form" >
+    <h4 class="form-title">请使用账户登录</h4>
+    <div class="alert alert-danger display-hide" id="login_alert">
+            <button type="button" class="close" ></button>
+			<span id="login_alert_title">
+                请输入账户或密码.
+            </span>
+    </div>
+    <div class="form-group">
+        <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+        <label class="control-label visible-ie8 visible-ie9">用户名</label>
+        <div class="input-icon">
+            <i class="fa fa-user"></i>
+            <input class="form-control placeholder-no-fix" id="username" type="text" autocomplete="off" placeholder="用户名" name="username"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label visible-ie8 visible-ie9">密码</label>
+        <div class="input-icon">
+            <i class="fa fa-lock"></i>
+            <input class="form-control placeholder-no-fix" id="password" type="password" autocomplete="off" placeholder="密码" name="password"/>
+        </div>
+    </div>
+    <div class="form-actions" style="border-bottom: none;">
+        <label class="checkbox" for="remember_me">
+            <div class="checker">
+                <span>
+                    <input type="checkbox" name="remember_me" id="remember_me" value="1">
+                </span>
+            </div>
+            记住密码
+        </label>
+        <button type="button" class="btn green-haze pull-right"id="js_login_submit" >
+            登录 <i class="m-icon-swapright m-icon-white"></i>
+        </button>
+    </div>
+
+</form>
+<!-- END LOGIN FORM -->
+
+</div>
+<!-- END LOGIN -->
+<!-- BEGIN COPYRIGHT -->
+<div class="copyright">
+<!--    2015 &copy; 哈罗同行-->
+</div>
+<!-- END COPYRIGHT -->
+<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/assets/global/plugins/respond.min.js"></script>
+<script src="/assets/global/plugins/excanvas.min.js"></script>
+<![endif]-->
+<script src="/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+<script src="/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+<script src="/assets/global/scripts/metronic.js" type="text/javascript"></script>
+<script src="/assets/global/plugins/jquery.cokie.min.js" type="text/javascript"></script>
+<script src="/scripts/common/common.widget.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<script>
+    $(document).ready(function(){
+        $('.close').unbind().bind('click',function(){
+            $('#login_alert').hide();
+        });
+
+        var submit=function(){
+            var account=$.trim($('#username').val());
+            var password= $.trim($('#password').val());
+            if(!account || !password){
+                $('#login_alert_title').html('请输入用户名或密码');
+                $('#login_alert').show();
+                return false;
+            }
+            var params={account:account,password:password};
+            $.wpost('/index/check-password',params,function(data){
+                //记住密码
+                var rememberMe=$('#remember_me').prop('checked');
+                var expireOpt = { expires: 365, path: '/' };
+                $.cookie('remember_me_status',rememberMe,expireOpt);
+                $.cookie('remember_me_account',account,expireOpt);
+                $.cookie('remember_me_password',password,expireOpt);
+                location.href='/';
+            },function(){
+                $('#login_alert_title').html('账户或密码错误');
+                $('#login_alert').show();
+            });
+        };
+        $('.login-form input').keypress(function(e) {
+            if (e.which == 13) {
+                submit();
+                return false;
+            }
+        });
+
+        $('#js_login_submit').unbind().wclick(function(){
+            submit();
+        });
+
+        //记住密码功能
+        var rememberMe=$.cookie('remember_me_status');
+        if(rememberMe=='true'){
+            $('#username').val($.cookie('remember_me_account'));
+            $('#password').val($.cookie('remember_me_password'));
+            $('#remember_me').prop('checked',true).parent('span').addClass('checked');
+        }
+
+        $('#remember_me').unbind().bind('change',function(){
+            var checked=$(this).prop('checked');
+            if(checked){
+                $(this).parent('span').addClass('checked');
+            }else{
+                $(this).parent('span').removeClass('checked');
+            }
+        });
+    });
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

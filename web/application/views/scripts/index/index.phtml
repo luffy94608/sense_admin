@@ -1,0 +1,110 @@
+<div class="page-content">
+    <!-- BEGIN PAGE HEADER-->
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+                <i class="fa fa-home"></i>
+                <a href="#">首页</a>
+            </li>
+        </ul>
+
+    </div>
+    <h3 class="page-title">
+    </h3>
+    <div class="portlet-body <?php echo $this->hasMonitorModule?'':''?>">
+        <?php
+            $summary = $this->summary;
+
+            $trackTop = $summary['claimedTotal'];
+            $trackBottom = $summary['allTotal'];
+            $trackTitle = $trackTop .'/'.$trackBottom;
+            $trackPercentage=($trackBottom)?floor(($trackTop)/($trackBottom)*100):0;;
+
+            $positionTop = $summary['claimedTotal'] - $summary['finishedTotal'];
+            $positionBottom = $summary['allTotal'];
+            $positionTitle = $positionTop .'/'.$positionBottom;
+            $positionPercentage=($positionBottom)?floor(($positionTop)/($positionBottom)*100):0;;
+
+            $emergencyTop = $summary['emergencyTotal'];;
+            $emergencyBottom = $summary['claimedTotal'];;
+            $emergencyTitle = $emergencyTop .'/'.$emergencyBottom;
+            $emergencyPercentage=($emergencyBottom)?floor(($emergencyTop)/($emergencyBottom)*100):0;;
+        ?>
+<!--        <div class="row ">-->
+<!--            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">-->
+<!--                <a href="/car/track" class="clearfix">-->
+<!--                    <div class="dashboard-stat blue-madison">-->
+<!--                        <div class="visual">-->
+<!--                            <div class="easy-pie-chart position-absolute">-->
+<!--                                <div class="number bounce color-white" data-percent="--><?php //echo $trackPercentage;?><!--">-->
+<!--                                    <span>--><?php //echo $trackPercentage;?><!--</span>%-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <i class="fa fa-comments"></i>-->
+<!--                        </div>-->
+<!--                        <div class="details">-->
+<!--                            <div class="number">-->
+<!--                                --><?php //echo $trackTitle; ?>
+<!--                            </div>-->
+<!--                            <div class="desc">-->
+<!--                                行车轨迹-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <a class="more" href="javascript:;">查看 <i class="m-icon-swapright m-icon-white"></i>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                </a>-->
+<!--            </div>-->
+<!---->
+<!--            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">-->
+<!--                <a href="/car/position" class="clearfix">-->
+<!--                    <div class="dashboard-stat green-haze">-->
+<!--                        <div class="visual ">-->
+<!--                            <div class="easy-pie-chart position-absolute">-->
+<!--                                <div class="number bounce color-white" data-percent="--><?php //echo $positionPercentage;?><!--">-->
+<!--                                    <span>--><?php //echo $positionPercentage;?><!-- </span>%-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <i class="fa fa-shopping-cart"></i>-->
+<!--                        </div>-->
+<!--                        <div class="details">-->
+<!--                            <div class="number">-->
+<!--                                --><?php //echo $positionTitle; ?>
+<!--                            </div>-->
+<!--                            <div class="desc">-->
+<!--                                实时监控-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <a class="more" href="javascript:;">查看 <i class="m-icon-swapright m-icon-white"></i>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                </a>-->
+<!--            </div>-->
+<!---->
+<!---->
+<!--            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">-->
+<!--                <a href="/statistic/emergency" class="clearfix">-->
+<!--                    <div class="dashboard-stat red-intense">-->
+<!--                        <div class="visual ">-->
+<!--                            <div class="easy-pie-chart position-absolute">-->
+<!--                            </div>-->
+<!--                            <i class="fa fa-shopping-cart"></i>-->
+<!--                        </div>-->
+<!--                        <div class="details">-->
+<!--                            <div class="number">-->
+<!--                                --><?php //echo $emergencyTop;?>
+<!--                            </div>-->
+<!--                            <div class="desc">-->
+<!--                                报警信息-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <a class="more" href="javascript:;">查看 <i class="m-icon-swapright m-icon-white"></i>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                </a>-->
+<!--            </div>-->
+<!---->
+<!--        </div>-->
+    </div>
+
+</div>

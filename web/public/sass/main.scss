@@ -1,0 +1,154 @@
+/* Welcome to Compass. Use this file to write IE specific override styles.
+ * Import this file using the following HTML or equivalent:
+ *  兼容性设置样式
+ */
+@import "compass/css3";
+@import "compass/css3/box";
+@import "compass/css3/flexbox";
+@import "compass/utilities";
+.position-relative{
+  position: relative;
+}
+.clear-fix{
+  *zoom:1;
+  &:after{
+    content: '.';
+    height: 0;
+    clear: both;
+    display: block;
+  }
+}
+.position-fixed{
+  position: fixed!important;
+}
+
+.color-white{
+  color: #ffffff;
+}
+.text-align-center{
+  text-align: center;
+}
+.width-p-100{
+  width: 100%!important;
+}
+.min-width-80{
+  min-width: 80px!important;
+}
+.min-width-100{
+  min-width: 100px!important;
+}
+.min-width-450{
+  min-width: 450px!important;
+}
+.display-table{
+  display: table!important;
+}
+.display-table-cell{
+  display: table-cell!important;
+}
+.vertical-align-middle{
+  vertical-align: middle;
+}
+.position-absolute{
+  position: absolute;
+}
+.display-inline-block{
+  display: inline-block;
+}
+.margin-5{
+  margin: 5px!important;
+}
+.margin-bottom-10{
+  margin-bottom: 10px!important;
+}
+.margin-bottom-20{
+  margin-bottom: 20px!important;
+}
+.padding-top-10{
+  padding-top: 10px!important;
+}
+
+.bus-min-width-450 {
+  min-width: 450px !important;
+}
+
+//小屏幕适配
+@media (max-width: 415px) {
+  .dataTables_filter{
+    float: left!important;
+  }
+  .bus-min-width-450 {
+    min-width: inherit!important;
+    @include transform(scale(0.8));
+  }
+}
+
+@media (max-width: 375px) {
+  .bus-min-width-450 {
+    min-width: inherit!important;
+    @include transform(scale(0.76));
+  }
+}
+@media (max-width: 320px) {
+  .bus-min-width-450 {
+    min-width: inherit!important;
+    @include transform(scale(0.66));
+  }
+}
+
+//车辆
+.bus-status-map{
+  position: relative;
+  width: 258px;
+  height: 510px;
+  margin: 0 auto;
+  background:url('../images/car2.png') no-repeat center;
+  .position-item{
+    position: absolute;
+    width: 100px;
+    text-align: center;
+    @include border-radius(2px!important);
+    &.position-1{
+      left: -80px;
+      top: 90px;
+    }
+    &.position-2{
+      right: -80px;
+      top: 90px;
+    }
+    &.position-3{
+      left: -80px;
+      bottom: 0;
+    }
+    &.position-4{
+      right: -80px;
+      bottom: 0;
+    }
+    &.position-5{
+      right: -80px;
+      bottom: 170px;
+    }
+    &.position-6{
+      left: -80px;
+      bottom: 170px;
+    }
+  }
+}
+.img-preview{
+  max-width: 100%;
+}
+
+
+.portlet.box.black {
+  border: none;
+  border-top: 0;
+}
+.portlet > .portlet-body.black, .portlet.black {
+  background-color: #333333;
+}
+
+.table-middle{
+  th,td{
+    vertical-align: middle!important;
+  }
+}

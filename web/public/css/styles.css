@@ -1,0 +1,48 @@
+/*自定义样式*/
+.gone{display:none;}
+.page_info{
+    /*display: inline-block;*/
+    float: left;
+    height: 35px;
+    line-height: 35px;
+    display: none;
+    color: #337ab7;
+    font-weight: bold;
+}
+.page_info .number{
+    margin: 5px;
+}
+.page_info input{
+    height: 25px;
+    line-height: 25px;
+    margin: 0 10px;
+    width: 60px;
+}
+.clear-margin-padding{
+    margin: inherit;
+    padding: inherit;
+}
+.clear-margin{
+    margin: inherit;
+}
+.clear-padding{
+    padding: inherit;
+}
+.hl-logo{
+    float: left;
+    width: 30px;
+    height: 30px;
+    border-radius: 2px !important;
+    margin: 9px 8px 0 0;
+    position: relative;
+    vertical-align: middle;
+    display: inline-block;
+    -moz-box-shadow: 0 0 5px #545454;
+    -ms-box-shadow: 0 0 5px #545454;
+    -webkit-box-shadow: 0 0 5px #545454;
+    box-shadow: 0 0 5px #545454;
+}
+.bread-word{
+    word-break: break-word;
+    word-wrap: break-word;
+}

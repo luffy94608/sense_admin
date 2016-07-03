@@ -1,0 +1,27 @@
+<?php
+$config = HaloEnv::get('config');
+$host = $config['url']['host'];
+$imgHost = $config['img']['host'];
+$debug = $config['app']['debug'] ? 'debug' : 'release';
+$version = '20160411144046';;
+$resourceRoot = $config['resource']['web']['root'];
+?>
+
+<script type="text/javascript">
+    document.global_config_data = {
+        version:'<?php echo $version;?>',
+        debug:'<?php echo $debug;?>',
+        host:'<?php echo $host;?>',
+        img_host:'<?php echo $imgHost;?>',
+        page:'<?php echo $this->page; ?>',
+        resource_root:'<?php echo $resourceRoot; ?>',
+    };
+    var require = {
+        urlArgs : "v=<?php echo $version; ?>"
+    };
+</script>
+
+<link href="<?php echo $resourceRoot; ?>/css/styles.css?version=<?php echo $version; ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo $resourceRoot; ?>/css/global.css?version=<?php echo $version; ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo $resourceRoot; ?>/css/main.css?version=<?php echo $version; ?>" rel="stylesheet" type="text/css" />
+

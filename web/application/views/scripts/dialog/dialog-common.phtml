@@ -1,0 +1,33 @@
+<div class='dialog gone' id='setting_dialog'>
+    <div ><input type="password" id="old_password" placeholder="原密码"></div>
+    <div ><input type="password" id="new_password" placeholder="新密码"></div>
+    <div ><input type="password" id="confirm_password" placeholder="确认新密码"></div>
+    <div ><input type="text" id="Phone" placeholder="手机号码" value='<?php echo $this->user['phone'];?>'></div>
+</div>
+<div class='dialog gone' id='login_dialog'>
+    <div ><input type="text" id="account" placeholder="用户名"  value='<?php echo $this->user['email'];?>'></div>
+    <div ><input type="password" id="password"  placeholder="密码" ></div>
+    <div id='verify_div' class='gone'><input type="password" id="verify"  placeholder="验证码" ></div>
+</div>
+<div class='dialog gone' id='global_confirm_dialog'>
+    <div class="confirm_content" id='confirm_content'></div>
+</div>
+<div class='dialog gone' id='global_input_dialog'>
+    <div class="form_row" >
+        <input type='text'>
+    </div>
+</div>
+<div class='dialog gone' id='global_text_dialog'>
+        <textarea style="height: 200px;"></textarea>
+</div>
+<div class='dialog gone' id='global_audit_dialog'>
+    <div class="formRow" >
+        <?php echo CommonBuilder::toWarningTypeSelector(false);?>
+    </div>
+    <div class="formRow" >
+        <button reject_val='1' class="buttonL bRed" data-loading-text="处理中">删除</button>
+        <button reject_val='3' class="buttonL bGreyish" data-loading-text="处理中">删除并通知</button>
+        <button reject_val='5' class="buttonL bBlack" data-loading-text="处理中">删除并警告</button>
+        <button reject_val='8' class="buttonL bBlue" data-loading-text="处理中">提醒</button>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+<!-- BEGIN SIDEBAR -->
+<div class="page-sidebar-wrapper">
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+    <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <div class="page-sidebar navbar-collapse collapse">
+        <!-- BEGIN SIDEBAR MENU -->
+        <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+        <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+        <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+        <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+        <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+        <ul class="page-sidebar-menu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+            <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+            <li class="sidebar-toggler-wrapper">
+                <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                <div class="sidebar-toggler" style="opacity:1;">
+                </div>
+                <!-- END SIDEBAR TOGGLER BUTTON -->
+            </li>
+            <?php
+            $isDevHost=true;
+            $currentUrl=$_SERVER['SCRIPT_URI'];
+            if(stripos($currentUrl,'opdev.hollo.cn')===false)
+            {
+                $isDevHost=false;
+            }
+
+            $arr = SideMenuBuilder::buildSideMenuArray();
+            SideMenuBuilder::buildAccessSideMenuArr($arr);
+
+            $str = '';
+            $max = count($arr);
+            $controller=$this->_request->controller;
+            $action=$this->_request->action;
+            foreach ($arr as $k=>$v)
+            {
+                $startOrLast='';
+                switch($k)
+                {
+                    case 0:$startOrLast='start';break;
+                    case ($max-1):$startOrLast='last';break;
+                }
+
+                $active='';
+                $open='';
+                $select='';
+                if(strtolower($controller)==strtolower($v['module']))
+                {
+                    $active="active";
+                    $open="open";
+                    $select="selected";
+                }
+
+                $childStr='';
+                if(!empty($v['children']) && is_array($v['children']))
+                {
+                    foreach($v['children'] as $item)
+                    {
+                        if($item['href']=='/user/send-money' && !$isDevHost)
+                        {
+                            continue;
+                        }
+                        $childActive='';
+                        $itemHrefArr=explode('/',str_replace('-','',$item['href']));
+                        if(stripos($itemHrefArr[1],$controller)!==false && stripos($itemHrefArr[2],$action)!==false)
+                        {
+                            $childActive='active';
+                        }
+
+                        $childStr.="
+                         <li class='{$childActive}'>
+                            <a href='{$item['href']}'>{$item['title']}</a>
+                        </li>
+                        ";
+                    }
+                }
+
+                $str.="
+                <li class='{$startOrLast} {$active} {$open}'>
+                    <a href='javascript:;'>
+                        <i class='{$v['icon']}'></i>
+                        <span class='title'>{$v['title']}</span>
+                        <span class='{$select}'></span>
+                        <span class='arrow {$open}'></span>
+                    </a>
+                    <ul class='sub-menu'>
+                        $childStr
+                    </ul>
+                </li>
+                ";
+            }
+            echo $str;
+
+
+
+            ?>
+        </ul>
+        <!-- END SIDEBAR MENU -->
+    </div>
+</div>
+<!-- END SIDEBAR -->

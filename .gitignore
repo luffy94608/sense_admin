@@ -1,0 +1,6 @@
+.idea
+config/server_type.ini
+web/public/release
+web/public/upload
+.sass-cache
+logs

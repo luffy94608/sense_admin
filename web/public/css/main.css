@@ -1,0 +1,210 @@
+@charset "UTF-8";
+/* Welcome to Compass. Use this file to write IE specific override styles.
+ * Import this file using the following HTML or equivalent:
+ *  兼容性设置样式
+ */
+/* line 9, ../sass/main.scss */
+.position-relative {
+  position: relative;
+}
+
+/* line 12, ../sass/main.scss */
+.clear-fix {
+  *zoom: 1;
+}
+/* line 14, ../sass/main.scss */
+.clear-fix:after {
+  content: '.';
+  height: 0;
+  clear: both;
+  display: block;
+}
+
+/* line 21, ../sass/main.scss */
+.position-fixed {
+  position: fixed !important;
+}
+
+/* line 25, ../sass/main.scss */
+.color-white {
+  color: #ffffff;
+}
+
+/* line 28, ../sass/main.scss */
+.text-align-center {
+  text-align: center;
+}
+
+/* line 31, ../sass/main.scss */
+.width-p-100 {
+  width: 100% !important;
+}
+
+/* line 34, ../sass/main.scss */
+.min-width-80 {
+  min-width: 80px !important;
+}
+
+/* line 37, ../sass/main.scss */
+.min-width-100 {
+  min-width: 100px !important;
+}
+
+/* line 40, ../sass/main.scss */
+.min-width-450 {
+  min-width: 450px !important;
+}
+
+/* line 43, ../sass/main.scss */
+.display-table {
+  display: table !important;
+}
+
+/* line 46, ../sass/main.scss */
+.display-table-cell {
+  display: table-cell !important;
+}
+
+/* line 49, ../sass/main.scss */
+.vertical-align-middle {
+  vertical-align: middle;
+}
+
+/* line 52, ../sass/main.scss */
+.position-absolute {
+  position: absolute;
+}
+
+/* line 55, ../sass/main.scss */
+.display-inline-block {
+  display: inline-block;
+}
+
+/* line 58, ../sass/main.scss */
+.margin-5 {
+  margin: 5px !important;
+}
+
+/* line 61, ../sass/main.scss */
+.margin-bottom-10 {
+  margin-bottom: 10px !important;
+}
+
+/* line 64, ../sass/main.scss */
+.margin-bottom-20 {
+  margin-bottom: 20px !important;
+}
+
+/* line 67, ../sass/main.scss */
+.padding-top-10 {
+  padding-top: 10px !important;
+}
+
+/* line 71, ../sass/main.scss */
+.bus-min-width-450 {
+  min-width: 450px !important;
+}
+
+@media (max-width: 415px) {
+  /* line 77, ../sass/main.scss */
+  .dataTables_filter {
+    float: left !important;
+  }
+
+  /* line 80, ../sass/main.scss */
+  .bus-min-width-450 {
+    min-width: inherit !important;
+    -moz-transform: scale(0.8);
+    -ms-transform: scale(0.8);
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+  }
+}
+@media (max-width: 375px) {
+  /* line 87, ../sass/main.scss */
+  .bus-min-width-450 {
+    min-width: inherit !important;
+    -moz-transform: scale(0.76);
+    -ms-transform: scale(0.76);
+    -webkit-transform: scale(0.76);
+    transform: scale(0.76);
+  }
+}
+@media (max-width: 320px) {
+  /* line 93, ../sass/main.scss */
+  .bus-min-width-450 {
+    min-width: inherit !important;
+    -moz-transform: scale(0.66);
+    -ms-transform: scale(0.66);
+    -webkit-transform: scale(0.66);
+    transform: scale(0.66);
+  }
+}
+/* line 100, ../sass/main.scss */
+.bus-status-map {
+  position: relative;
+  width: 258px;
+  height: 510px;
+  margin: 0 auto;
+  background: url("../images/car2.png") no-repeat center;
+}
+/* line 106, ../sass/main.scss */
+.bus-status-map .position-item {
+  position: absolute;
+  width: 100px;
+  text-align: center;
+  -moz-border-radius: 2px !important;
+  -webkit-border-radius: 2px;
+  border-radius: 2px !important;
+}
+/* line 111, ../sass/main.scss */
+.bus-status-map .position-item.position-1 {
+  left: -80px;
+  top: 90px;
+}
+/* line 115, ../sass/main.scss */
+.bus-status-map .position-item.position-2 {
+  right: -80px;
+  top: 90px;
+}
+/* line 119, ../sass/main.scss */
+.bus-status-map .position-item.position-3 {
+  left: -80px;
+  bottom: 0;
+}
+/* line 123, ../sass/main.scss */
+.bus-status-map .position-item.position-4 {
+  right: -80px;
+  bottom: 0;
+}
+/* line 127, ../sass/main.scss */
+.bus-status-map .position-item.position-5 {
+  right: -80px;
+  bottom: 170px;
+}
+/* line 131, ../sass/main.scss */
+.bus-status-map .position-item.position-6 {
+  left: -80px;
+  bottom: 170px;
+}
+
+/* line 137, ../sass/main.scss */
+.img-preview {
+  max-width: 100%;
+}
+
+/* line 142, ../sass/main.scss */
+.portlet.box.black {
+  border: none;
+  border-top: 0;
+}
+
+/* line 146, ../sass/main.scss */
+.portlet > .portlet-body.black, .portlet.black {
+  background-color: #333333;
+}
+
+/* line 151, ../sass/main.scss */
+.table-middle th, .table-middle td {
+  vertical-align: middle !important;
+}

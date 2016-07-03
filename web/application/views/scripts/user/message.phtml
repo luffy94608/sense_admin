@@ -1,0 +1,85 @@
+<style type="text/css">
+    .checkbox {
+        width: 25px;
+        height: 25px;
+    }
+</style>
+<div class="page-content">
+    <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-list"></i>消息推送
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <form action="#" class="form-horizontal form-bordered">
+                <div class="form-group">
+                    <label class="control-label col-md-3">发送人群：</label>
+                    <div class="col-md-2">
+                        <select class="form-control" id="select">
+                            <option>指定用户</option>
+                            <option>指定线路</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="display: block" id="user">
+                    <label class="control-label col-md-3">手机号：</label>
+                    <div class="col-md-7">
+                        <input class="form-control" id="mobile" type="text" placeholder="请输入手机号,多个手机号请用逗号隔开,不填默认全部（请谨慎填写）......">
+                    </div>
+                </div>
+                <div class="form-group" style="display: none" id="lineTime">
+                    <label class="control-label col-md-3">选择时间：</label>
+                    <div class="col-md-5">
+                        <div class="input-icon margin-5">
+                            <i class="fa fa-calendar"></i>
+                            <input id="time" class="form-control date-picker input-inline" type="text">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="display: none" id="line">
+                    <label class="control-label col-md-3">选择线路：</label>
+                    <div class="col-md-5">
+                        <div class="input-icon margin-5">
+                            <select class="select2me form-control" data-placeholder="请选择要查看的线路" id="lineSelect" multiple>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="display: none" id="schedule">
+                    <label class="control-label col-md-3">选择调度：</label>
+                    <div class="col-md-5">
+                        <div class="input-icon margin-5">
+                            <select class="select2me form-control" data-placeholder="不选调度时默认所有" id="scheduleSelect" multiple>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">内容：</label>
+                    <div class="col-md-7">
+                        <textarea class="form-control autosizeme" rows="4" placeholder="请输入内容......" id="content"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">发送类型：</label>
+                    <div class="col-md-2">
+                        <select class="form-control" id="type">
+                            <option>短信</option>
+                            <option>通知</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div style="padding-top: 10px;text-align: center;display: block" id="send">
+            <button type="button" class="btn blue" id="btn">发送</button>
+        </div>
+        <div style="padding-top: 10px;text-align: center;display: none" id="alert">
+            <button type="button" class="btn btn-danger" id="submit">确认</button>
+            <button type="button" class="btn btn-delCancela" id="cancel">取消</button>
+        </div>
+    </div>
+</div>

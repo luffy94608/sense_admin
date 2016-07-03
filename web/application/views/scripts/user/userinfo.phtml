@@ -1,0 +1,191 @@
+<div class="page-content">
+    <div class="portlet light ">
+        <div class="portlet-title">
+            <div class="caption caption-md">
+                <i class="icon-bar-chart font-green-haze hide"></i>
+                <span class="caption-subject font-green-haze bold uppercase">
+<!--                    用户信息-->
+                    <div class="portlet-input input-inline" id="search_condition">
+                        <div class="chat-form clear-margin" style="width: 130%">
+                            <div class="input-cont">
+                                <input class="form-control" id="searchKey" type="text" placeholder="请输入用户手机号">
+                            </div>
+                            <div class="btn-cont" id="searchUser">
+									<span class="arrow">
+									</span>
+                                <a href="javascript:;" class="btn blue icn-only">
+                                    <i class="fa fa-search icon-white"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+            </div>
+            <!--            <div style="float: right;padding-top: 18px;display: none;z-index: 10" id="refund_list">-->
+            <!--                <a href='javascript:;' class=' blod label label-info'></a>-->
+            <!--            </div>-->
+        </div>
+        <div class="portlet-body">
+
+            <div class="table-scrollable table-scrollable-borderless" id="wrapperPageList"  data-hasMore="true" data-loading="false">
+                <table class="table table-hover table-light" id="userInfo">
+                    <thead>
+                    <tr class="uppercase" style="color:#444444;">
+                        <th style="color:#444444;">手机号</th>
+                        <th style="color:#444444;">昵称</th>
+                        <th style="color:#444444;">公司机构</th>
+                        <th style="color:#444444;">注册时间</th>
+                        <th style="color:#444444;">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="portlet-title userOrderTitle gone">
+            <div class="caption caption-md">
+                <i class="icon-bar-chart font-green-haze hide"></i>
+                <span class="caption-subject font-green-haze bold uppercase js_table_title">购票信息</span>
+            </div>
+        </div>
+        <div class="portlet-body userOrderBody gone">
+            <table class="table table-striped table-bordered table-hover" id="orderTable">
+                <thead>
+                <tr>
+                    <th>购票时间</th>
+                    <th>订单号</th>
+                    <th>购票线路</th>
+                    <th>上车站</th>
+                    <th>下车站</th>
+                    <th>发车时间</th>
+                    <th>乘车时间</th>
+                    <th>金额</th>
+                    <th>支付方式</th>
+                    <th>座位号</th>
+                    <th>状态</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+<!--        <div class="portlet-body js_table_list_section gone">-->
+<!--            <!--      充值记录      -->
+<!---->
+<!--            <table class="table table-striped table-bordered table-hover gone" id="js_charge_list_table" >-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>订单号</th>-->
+<!--                    <th>充值金额</th>-->
+<!--                    <th>奖励金额</th>-->
+<!--                    <th>支付方式</th>-->
+<!--                    <th>支付账号</th>-->
+<!--                    <th>创建时间</th>-->
+<!--                    <th>支付时间</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody id="js_recharge_table_list">-->
+<!---->
+<!--                </tbody>-->
+<!--            </table>-->
+<!---->
+<!--            <!--     购票信息       -->
+<!--            <div class="portlet-body dataTables_wrapper no-footer">-->
+<!--                <table class="table table-striped table-bordered table-hover gone" id="js_account_list_table" >-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>购票时间</th>-->
+<!--                        <th>订单号</th>-->
+<!--                        <th>线路名称</th>-->
+<!--                        <th>上车站</th>-->
+<!--                        <th>下车站</th>-->
+<!--                        <th>车票类型</th>-->
+<!--                        <th>购票平台</th>-->
+<!--                        <th>总票价</th>-->
+<!--                        <th>余额支付</th>-->
+<!--                        <th>第三方支付</th>-->
+<!--                        <th>支付账号</th>-->
+<!--                        <th>优惠券支付</th>-->
+<!--                        <th>优惠券类型</th>-->
+<!--                        <th>操作</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody id="js_account_table_list">-->
+<!---->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!---->
+<!--            <!--     优惠劵信息      -->
+<!--            <div class="portlet-body dataTables_wrapper no-footer">-->
+<!--                <table class="table table-striped table-bordered table-hover gone" id="js_coupon_list_table">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>类型</th>-->
+<!--                        <th>金额</th>-->
+<!--                        <th>生成时间</th>-->
+<!--                        <th>过期时间</th>-->
+<!--                        <th>使用状况</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody id="js_coupon_list">-->
+<!---->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!---->
+<!--            <!--    退款记录    -->
+<!--            <div class="portlet-body dataTables_wrapper no-footer">-->
+<!--                <table class="table table-striped table-bordered table-hover gone" id="js_refund_list_table">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>购票时间</th>-->
+<!--                        <th>购票种类</th>-->
+<!--                        <th>购票线路</th>-->
+<!--                        <th>退款时间</th>-->
+<!--                        <th>退款金额</th>-->
+<!--                        <th>退款方式</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody id="js_refund_list">-->
+<!---->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!---->
+<!--        </div>-->
+
+    </div>
+
+</div>
+
+<!--查看用户座位信息 信息modal-->
+<!--<div class="modal fade modal-scroll" id="js_user_seat_info_modal" >-->
+<!--    <div class="modal-content">-->
+<!--        <div class="modal-header">-->
+<!--            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+<!--            <h4 class="modal-title" id="exampleModalLabel">预约座位信息</h4>-->
+<!--        </div>-->
+<!--        <div class="modal-body">-->
+<!--            <div class="portlet-body form">-->
+<!--                <!-- BEGIN FORM-->
+<!--                <table class="table table-striped table-bordered table-hover " id="js_user_seat_table" >-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>出发时间</th>-->
+<!--                        <th>座位</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody id="js_user_seat_table_list">-->
+<!---->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--                <!-- END FORM-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="modal-footer">-->
+<!--            <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->

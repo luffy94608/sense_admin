@@ -8,14 +8,12 @@ $(document).ready(function(){
 
         progress: $('.js_progress_section'),
         progressBar: $('.progress-bar'),
-        imgPreview: $('.js_img_preview'),
 
         inputTitle : $('#js_modal_title'),
-        inputSubTitle : $('#js_modal_desc'),
-        inputUrl : $('#js_modal_url'),
+        inputContent : $('#js_modal_content'),
+        inputType : $('#js_modal_type'),
         inputBtnName : $('#js_modal_btn_name'),
-        inputBtnUrl : $('#js_modal_btn_url'),
-        inputImg : $('#js_modal_img'),
+        inputUrl : $('#js_modal_url'),
 
         /**
          *初始化表单
@@ -23,18 +21,12 @@ $(document).ready(function(){
         setModalFormData : function (data) {
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('edit'));
-            var img = '';
-            if(data.img){
-                img = document.global_config_data.img_host + data.img;
-            }
-            init.imgPreview.attr('src',img).removeClass('gone');
 
             init.inputTitle.val(data.title);
-            init.inputSubTitle.val(data.sub_title);
-            init.inputUrl.val(data.url);
             init.inputBtnName.val(data.btn_name);
-            init.inputBtnUrl.val(data.btn_url);
-            init.inputImg.val(data.img);
+            init.inputContent.val(data.content);
+            init.inputType.val(data.lock_type_id);
+            init.inputUrl.val(data.url);
         },
         /**
          *清空表单
@@ -42,14 +34,11 @@ $(document).ready(function(){
         clearModalFormData : function () {
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('new'));
-            init.imgPreview.addClass('gone').attr('src','');
-
             init.inputTitle.val('');
-            init.inputSubTitle.val('');
-            init.inputUrl.val('');
             init.inputBtnName.val('');
-            init.inputBtnUrl.val('');
-            init.inputImg.val('');
+            init.inputContent.val('');
+            init.inputType.val(0);
+            init.inputUrl.val('');
         },
 
 
@@ -63,13 +52,12 @@ $(document).ready(function(){
              */
             $(document).on('click','.js_edit',function () {
                 init.clearModalFormData();
-                var submitBtn = init.modal.find('.submit');
+                var submitBtn = init.modal.find('.js_submit');
                 var $this=$(this);
                 var $parent=$this.parents('tr');
-                var id=$parent.attr('data-id');
-                var info=$parent.attr('data-info');
+                var id=$parent.data('id');
+                var info=$parent.data('info');
                 if(id && info){
-                    info= JSON.parse(info);
                     init.setModalFormData(info);
                 }
 
@@ -77,19 +65,26 @@ $(document).ready(function(){
                 submitBtn.unbind().bind('click',function () {
                     var params = {
                         id:id,
-                        img:$.trim(init.inputImg.val()),
                         title:$.trim(init.inputTitle.val()),
-                        sub_title:$.trim(init.inputSubTitle.val()),
-                        url:$.trim(init.inputUrl.val()),
                         btn_name:$.trim(init.inputBtnName.val()),
-                        btn_url:$.trim(init.inputBtnUrl.val()),
+                        content:$.trim(init.inputContent.val()),
+                        type_id:$.trim(init.inputType.val()),
+                        url:$.trim(init.inputUrl.val()),
+                    };
+                    var checkMap = {
+                        title:'请输入名称',
+                        btn_name:'请输入下载按钮名称',
+                        content:'请填写描述',
+                        url:'请上传下载文件',
                     };
 
-                    if(!params.img){
-                        $.showToast('请上传图片',false);
-                        return false;
+                    for (var key in checkMap){
+                        if(!params[key]){
+                            $.showToast(checkMap[key],false);
+                            return false;
+                        }
                     }
-                    $.wpost('/home/update-banner-ajax',params,function(res){
+                    $.wpost('/lock/update-download-ajax',params,function(res){
                         if(!params.id){
                             init.listContainer.append(res)
                         }else{
@@ -109,7 +104,7 @@ $(document).ready(function(){
                 var $parent=$this.parents('tr');
                 var id=$parent.attr('data-id');
                 $.confirm({content:'确认删除吗',success:function(){
-                    $.wpost('/home/delete-banner-ajax',{id:id},function(){
+                    $.wpost('/lock/delete-download-ajax',{id:id},function(){
                         $.showToast('删除成功',true);
                         $this.parents('tr').remove();
                     });
@@ -118,14 +113,16 @@ $(document).ready(function(){
 
 
             /**
-             * 上传图片
+             * 上传文件
              */
             $('.js_upload_image').unbind().bind('click',function () {
-                $(this).uploadImage('/upload/upload-image',{request_type:'ajax'},function (data) {
-                    if(data.path){
-                        init.inputImg.val(data.path);
-                        init.imgPreview.attr('src',data.img).removeClass('gone');
+                $(this).uploadImage('/upload/upload-image',{request_type:'ajax',type:1},function (data) {
+                    if(data.res){
+                        init.inputUrl.val(data.path);
+                    }else{
+                        $.showToast(data.desc,false);
                     }
+
                     init.progress.addClass('gone');
                 },function (percent) {
                     if(percent>=0){

@@ -208,3 +208,9 @@
 .table-middle th, .table-middle td {
   vertical-align: middle !important;
 }
+
+/* line 155, ../sass/main.scss */
+.table-img {
+  max-width: 140px;
+  max-height: 70px;
+}

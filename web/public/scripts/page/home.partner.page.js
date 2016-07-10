@@ -104,8 +104,8 @@ $(document).ready(function(){
              */
             $('.js_upload_image').unbind().bind('click',function () {
                 $(this).uploadImage('/upload/upload-image',{request_type:'ajax'},function (data) {
-                    if(data.url){
-                        init.inputImg.val(data.url);
+                    if(data.path){
+                        init.inputImg.val(data.path);
                         init.imgPreview.attr('src',data.img).removeClass('gone');
                     }
                     init.progress.addClass('gone');

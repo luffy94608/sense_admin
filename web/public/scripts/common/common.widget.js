@@ -192,7 +192,8 @@
         var input = $(' <input style="display:none;" type="file" name="file"/>');
         var _this = $(this);
         input.change(function(){
-            if(/image/i.test(this.files[0].type)){
+            // if(/image/i.test(this.files[0].type))
+            {
                 var xhr = new XMLHttpRequest();
                 _this.data("_sid",'_sid_'+Math.random());
                 xhr.upload.onprogress = function(e) {
@@ -222,10 +223,11 @@
                 }
 
                 xhr.send(fd);
-            }else{
-                alert('请选择图片');
-                $(this).click();
             }
+            // else{
+            //     alert('请选择图片');
+            //     $(this).click();
+            // }
         });
         $(this).after(input);
         input.click();

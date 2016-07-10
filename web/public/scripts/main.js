@@ -57,6 +57,9 @@
             'manage-recruit-page': 'page/manage.recruit.page',
             'manage-news-page': 'page/manage.news.page',
             'manage-map-page': 'page/manage.map.page',
+            'lock-type-page': 'page/lock.type.page',
+            'lock-download-page': 'page/lock.download.page',
+            'lock-list-page': 'page/lock.type.page',
             'home-banner-page': 'page/home.banner.page',
             'home-partner-page': 'page/home.partner.page',
 
@@ -112,6 +115,9 @@
             'manage-recruit-page':['base'],
             'manage-map-page':['base'],
             'manage-news-page':['base','date-picker'],
+            'lock-type-page':['base'],
+            'lock-download-page':['base'],
+            'lock-list-page':['base'],
             'home-banner-page':['base'],
             'home-partner-page':['base'],
 

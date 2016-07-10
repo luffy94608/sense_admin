@@ -10,12 +10,12 @@ $(document).ready(function(){
         progressBar: $('.progress-bar'),
         imgPreview: $('.js_img_preview'),
 
+        inputName : $('#js_modal_name'),
         inputTitle : $('#js_modal_title'),
-        inputSubTitle : $('#js_modal_desc'),
-        inputUrl : $('#js_modal_url'),
-        inputBtnName : $('#js_modal_btn_name'),
-        inputBtnUrl : $('#js_modal_btn_url'),
+        inputContent : $('#js_modal_content'),
         inputImg : $('#js_modal_img'),
+        
+        
 
         /**
          *初始化表单
@@ -29,11 +29,9 @@ $(document).ready(function(){
             }
             init.imgPreview.attr('src',img).removeClass('gone');
 
+            init.inputName.val(data.name);
             init.inputTitle.val(data.title);
-            init.inputSubTitle.val(data.sub_title);
-            init.inputUrl.val(data.url);
-            init.inputBtnName.val(data.btn_name);
-            init.inputBtnUrl.val(data.btn_url);
+            init.inputContent.val(data.content);
             init.inputImg.val(data.img);
         },
         /**
@@ -43,12 +41,9 @@ $(document).ready(function(){
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('new'));
             init.imgPreview.addClass('gone').attr('src','');
-
+            init.inputName.val('');
             init.inputTitle.val('');
-            init.inputSubTitle.val('');
-            init.inputUrl.val('');
-            init.inputBtnName.val('');
-            init.inputBtnUrl.val('');
+            init.inputContent.val('');
             init.inputImg.val('');
         },
 
@@ -57,39 +52,42 @@ $(document).ready(function(){
          * 初始化按钮时间
          */
         initBtnEvent : function () {
-
             /**
              * 新建或者编辑
              */
             $(document).on('click','.js_edit',function () {
                 init.clearModalFormData();
-                var submitBtn = init.modal.find('.submit');
+                var submitBtn = init.modal.find('.js_submit');
                 var $this=$(this);
                 var $parent=$this.parents('tr');
-                var id=$parent.attr('data-id');
-                var info=$parent.attr('data-info');
+                var id=$parent.data('id');
+                var info=$parent.data('info');
                 if(id && info){
-                    info= JSON.parse(info);
                     init.setModalFormData(info);
                 }
-
                 init.modal.modal();
                 submitBtn.unbind().bind('click',function () {
                     var params = {
                         id:id,
-                        img:$.trim(init.inputImg.val()),
+                        name:$.trim(init.inputName.val()),
                         title:$.trim(init.inputTitle.val()),
-                        sub_title:$.trim(init.inputSubTitle.val()),
-                        url:$.trim(init.inputUrl.val()),
-                        btn_name:$.trim(init.inputBtnName.val()),
-                        btn_url:$.trim(init.inputBtnUrl.val()),
+                        content:$.trim(init.inputContent.val()),
+                        img:$.trim(init.inputImg.val()),
+                    };
+                    var checkMap = {
+                        name:'请输入类别名称',
+                        title:'请输入标题',
+                        content:'请填写描述',
+                        img:'上传产品图',
                     };
 
-                    if(!params.img){
-                        $.showToast('请上传图片',false);
-                        return false;
+                    for (var key in checkMap){
+                        if(!params[key]){
+                            $.showToast(checkMap[key],false);
+                            return false;
+                        }
                     }
-                    $.wpost('/home/update-banner-ajax',params,function(res){
+                    $.wpost('/lock/update-type-ajax',params,function(res){
                         if(!params.id){
                             init.listContainer.append(res)
                         }else{
@@ -109,7 +107,7 @@ $(document).ready(function(){
                 var $parent=$this.parents('tr');
                 var id=$parent.attr('data-id');
                 $.confirm({content:'确认删除吗',success:function(){
-                    $.wpost('/home/delete-banner-ajax',{id:id},function(){
+                    $.wpost('/lock/delete-type-ajax',{id:id},function(){
                         $.showToast('删除成功',true);
                         $this.parents('tr').remove();
                     });
@@ -118,13 +116,13 @@ $(document).ready(function(){
 
 
             /**
-             * 上传图片
+             * 上传文件
              */
             $('.js_upload_image').unbind().bind('click',function () {
                 $(this).uploadImage('/upload/upload-image',{request_type:'ajax'},function (data) {
                     if(data.path){
                         init.inputImg.val(data.path);
-                        init.imgPreview.attr('src',data.img).removeClass('gone');
+                        init.imgPreview.attr('src',data.url).removeClass('gone');
                     }
                     init.progress.addClass('gone');
                 },function (percent) {

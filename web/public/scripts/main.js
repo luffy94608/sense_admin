@@ -29,7 +29,8 @@
             'pulsate': '../assets/global/plugins/jquery.pulsate.min',
 
             'dataTable': '../assets/global/scripts/datatable',
-            'select2': '../assets/global/plugins/select2/select2',
+            'select2': '../assets/global/plugins/select2/select2.min',
+            'select2_zh-CN': '../assets/global/plugins/select2/select2_locale_zh-CN',
             'dataTables-tableTools': "../assets/global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min",
             //amchart
             'amcharts': '../assets/global/plugins/amcharts/amcharts/amcharts',
@@ -59,7 +60,7 @@
             'manage-map-page': 'page/manage.map.page',
             'lock-type-page': 'page/lock.type.page',
             'lock-download-page': 'page/lock.download.page',
-            'lock-list-page': 'page/lock.type.page',
+            'lock-list-page': 'page/lock.list.page',
             'home-banner-page': 'page/home.banner.page',
             'home-partner-page': 'page/home.partner.page',
 

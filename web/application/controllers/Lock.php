@@ -205,8 +205,82 @@ class LockController extends BaseController
     public function listAction()
     {
         $this->view->page='lock-list-page';
-        $options = $this->model->getTypeList();
-        $this->view->options = $options['list'];
+        $model = new DownloadModel();
+        $options = $model->getDownloadOptions();
+        $this->view->options = $options;
+
+        $list = $this->model->getLockList();
+        $html = LockBuilder::toBuildLockListHtml($list['list']);
+        $this->view->html = $html;
+    }
+
+    /**
+     * 更新下载
+     */
+    public function updateLockAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['version']=$this->getLegalParam('version','str');
+        $params['lock_type_id']=$this->getLegalParam('type_id','str');
+        $params['try_status']=$this->getLegalParam('status','str');
+        $params['download_ids']=$this->getLegalParam('download_ids','raw');
+        $params['pic']=$this->getLegalParam('pic','str');
+        $params['desc']=$this->getLegalParam('desc','str');
+        $params['feature']=$this->getLegalParam('feature','str');
+        $params['params']=$this->getLegalParam('params','raw');
+
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $id = $this->getLegalParam('id','str');
+        if (empty($id))
+        {
+            $result = $this->model->createLock($params);
+            $params['id'] = $result;
+        }
+        else
+        {
+            $result = $this->model->updateLock($id,$params);
+            $params['id'] = $id;
+        }
+
+        if($result>0)
+        {
+            $detail = $this->model->getLockDetail($params['id']);
+            $html = LockBuilder::toBuildLockItemHtml($detail);
+            $this->inputResult($html);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 删除 下载
+     */
+    public function deleteLockAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['id']=$this->getLegalParam('id','str');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $result = $this->model->deleteLock($params['id']);
+        if($result>0)
+        {
+            $this->inputResult($result);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
     }
 
 }

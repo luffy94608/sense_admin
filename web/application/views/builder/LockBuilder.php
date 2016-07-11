@@ -154,10 +154,20 @@ class LockBuilder
     {
         $info = json_encode($item);
         $id = $item['id'];
-        $name = $item['name'];
+        $version = $item['version'];
+        $type = $item['type']['name'];
+        $pic = $item['pic'];
+
+        if(stripos($pic,'http://')===false && stripos($pic,'https://')===false && stripos($pic,'ftp://')===false){
+            $host = HolloEnv::getImgHost();
+            $pic = $host.$pic;
+            $pic = "<img src='{$pic}' class='table-img'>";
+        }
         $html="
                 <tr  data-id='{$id}'  data-info='{$info}'>
-                    <td>{$name}</td>
+                    <td>{$pic}</td>
+                    <td>{$type}</td>
+                    <td>{$version}</td>
                     <td>
                         <a href='javascript:;' class='btn default btn-sm blue js_edit'>
                             <i class='fa fa-edit'></i> 

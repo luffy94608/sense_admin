@@ -10,11 +10,78 @@ $(document).ready(function(){
         progressBar: $('.progress-bar'),
         imgPreview: $('.js_img_preview'),
 
-        inputName : $('#js_modal_name'),
-        inputTitle : $('#js_modal_title'),
-        inputContent : $('#js_modal_content'),
+        inputVersion : $('#js_modal_version'),
+        inputType : $('#js_modal_type'),
+        inputStatus : $('#js_modal_status'),
+        inputDownload : $('#js_modal_download'),
         inputImg : $('#js_modal_img'),
+        inputDesc : $('#js_modal_desc'),
+        inputFeature : $('#js_modal_feature'),
 
+        paramsAddBtn : $('.js_modal_params_add_btn'),
+        paramsSection : $('.js_modal_params'),
+        paramsCloneNode : $('.jmp_node .js_modal_param',$('.js_modal_params')),
+        paramsSectionList : $('.jmp_list',$('.js_modal_params')),
+
+        /**
+         * 初始化 select 2
+         */
+        initSelectBtn : function () {
+            init.inputDownload.select2({
+                placeholder: "选择sdk下载文件",
+                allowClear: true
+            });
+        },
+
+        /**
+         * 初始化 基本参数事件
+         */
+        initModalParamsEvent : function () {
+            init.paramsAddBtn.unbind().bind('click',function () {
+                var node = init.paramsCloneNode.clone();
+                init.paramsSectionList.append(node);
+            });
+            $(document).on('click','.jmp_delete',function () {
+                $(this).parents('.js_modal_param').remove();
+            });
+        },
+        getModalParamsData : function () {
+            var objs = $('.js_modal_param',init.paramsSectionList);
+            var len = objs.length;
+            var res  = [];
+            if(len)
+            {
+                objs.each(function (key) {
+                    var tmpObj = $(this).find('input');
+                    var params = {
+                      id:  $.trim(tmpObj.eq(0).val()),
+                      key:  $.trim(tmpObj.eq(1).val()),
+                      value:  $.trim(tmpObj.eq(2).val()),
+                      desc:  $.trim(tmpObj.eq(3).val()),
+                      sort_num:  key+1
+                    };
+                    res.push(params);
+                });
+            }
+            return res;
+        },
+        setModalParamsData : function (data) {
+            if(data)
+            {
+                data.forEach(function (value) {
+                    var node = init.paramsCloneNode.clone();
+                    var tmpObj = $(node).find('input');
+                    tmpObj.eq(0).val(value.id);
+                    tmpObj.eq(1).val(value.param_1);
+                    tmpObj.eq(2).val(value.param_2);
+                    tmpObj.eq(3).val(value.param_3);
+                    init.paramsSectionList.append(node);
+                });
+            }
+        },
+        clearModalParamsData : function () {
+            init.paramsSectionList.html('');
+        },
 
 
         /**
@@ -23,16 +90,24 @@ $(document).ready(function(){
         setModalFormData : function (data) {
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('edit'));
-            var img = '';
-            if(data.img){
-                img = document.global_config_data.img_host + data.img;
+            var pic = '';
+            if(data.pic){
+                pic = document.global_config_data.img_host + data.pic;
             }
-            init.imgPreview.attr('src',img).removeClass('gone');
+            init.imgPreview.attr('src',pic).removeClass('gone');
 
-            init.inputName.val(data.name);
-            init.inputTitle.val(data.title);
-            init.inputContent.val(data.content);
-            init.inputImg.val(data.img);
+            init.inputVersion.val(data.version);
+            init.inputType.val(data.lock_type_id);
+            if(data.try_status==1){
+                init.inputStatus.prop('checked',true);
+            }
+            init.inputDownload.select2('val',data.download_ids.split(','));
+            init.inputImg.val(data.pic);
+            init.inputDesc.val(data.description);
+            init.inputFeature.val(data.feature);
+            if(data.params){
+                init.setModalParamsData(data.params);
+            }
         },
         /**
          *清空表单
@@ -41,10 +116,14 @@ $(document).ready(function(){
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('new'));
             init.imgPreview.addClass('gone').attr('src','');
-            init.inputName.val('');
-            init.inputTitle.val('');
-            init.inputContent.val('');
+            init.inputVersion.val('');
+            init.inputType.val('');
+            init.inputStatus.prop('checked',false);
+            init.inputDownload.select2('val','');
             init.inputImg.val('');
+            init.inputDesc.val('');
+            init.inputFeature.val('');
+            init.clearModalParamsData();
         },
 
 
@@ -52,6 +131,7 @@ $(document).ready(function(){
          * 初始化按钮时间
          */
         initBtnEvent : function () {
+
             /**
              * 新建或者编辑
              */
@@ -69,25 +149,32 @@ $(document).ready(function(){
                 submitBtn.unbind().bind('click',function () {
                     var params = {
                         id:id,
-                        name:$.trim(init.inputName.val()),
-                        title:$.trim(init.inputTitle.val()),
-                        content:$.trim(init.inputContent.val()),
-                        img:$.trim(init.inputImg.val()),
+                        version:$.trim(init.inputVersion.val()),
+                        type_id:$.trim(init.inputType.val()),
+                        status:init.inputStatus.prop('checked') ? 1 : 0,
+                        download_ids:$.trim(init.inputDownload.select2('val')),
+                        pic:$.trim(init.inputImg.val()),
+                        desc:$.trim(init.inputDesc.val()),
+                        feature:$.trim(init.inputFeature.val()),
+                        params:init.getModalParamsData()
                     };
                     var checkMap = {
-                        name:'请输入类别名称',
-                        title:'请输入标题',
-                        content:'请填写描述',
-                        img:'上传产品图',
+                        version:'请输入版本名称',
+                        type_id:'请选择产品类别',
+                        download_ids:'请选择sdk下载文件',
+                        pic:'请上传产品图',
+                        desc:'请输入产品信息',
+                        feature:'请输入产品特点',
+                        params:'请添加基本参数',
                     };
 
                     for (var key in checkMap){
-                        if(!params[key]){
+                        if(!params[key] || params[key].length<1){
                             $.showToast(checkMap[key],false);
                             return false;
                         }
                     }
-                    $.wpost('/lock/update-type-ajax',params,function(res){
+                    $.wpost('/lock/update-lock-ajax',params,function(res){
                         if(!params.id){
                             init.listContainer.append(res)
                         }else{
@@ -107,7 +194,7 @@ $(document).ready(function(){
                 var $parent=$this.parents('tr');
                 var id=$parent.attr('data-id');
                 $.confirm({content:'确认删除吗',success:function(){
-                    $.wpost('/lock/delete-type-ajax',{id:id},function(){
+                    $.wpost('/lock/delete-lock-ajax',{id:id},function(){
                         $.showToast('删除成功',true);
                         $this.parents('tr').remove();
                     });
@@ -132,8 +219,35 @@ $(document).ready(function(){
                     init.progressBar.css('width',percent+'%');
                 });
             });
+
+            /**
+             * 上升 下降
+             */
+            $(document).on('click','.js_up,.js_down',function () {
+                var $this=$(this);
+                var $parent=$($this.parents('.js_modal_param')[0]);
+                var target;
+
+                if($this.hasClass('js_up')){
+                    target = $parent.prev()[0];
+                }else{
+                    target = $parent.next()[0];
+                }
+                if(!target){
+                    return false;
+                }
+                target = $(target);
+                var bakTarget = target.clone();
+                var bakCurrent =  $parent.clone();
+
+                target.replaceWith(bakCurrent);
+                $parent.replaceWith(bakTarget);
+            });
+
         },
         run : function () {
+            init.initSelectBtn();
+            init.initModalParamsEvent();
             init.initBtnEvent();
         }
     };

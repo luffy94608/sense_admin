@@ -45,35 +45,18 @@
         </div>
         <div class="modal-body ">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <div class="form-group">
                         <label class="control-label">版本名称</label>
                         <input type="text" id="js_modal_version" class="form-control" placeholder="">
                         <span class="help-block"></span>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <div class="form-group">
                         <label class="control-label">产品类别</label>
-                        <select id="js_modal_type" class="form-control">
-                            <?php
-                            $options = $this->options;
-                            $str = '';
-                            foreach ($options as $option)
-                            {
-                                $id= $option['id'];
-                                $name= $option['name'];
-                                $str.="<option value={$id}>{$name}</option>";
-                            }
-                            echo $str;
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>资源下载</label>
-                        <select id="js_modal_download" class="form-control">
+                        <select id="js_modal_type" class="form-control" >
+                            <option value=''>请选择产品类别</option>
                             <?php
                             $options = $this->options;
                             $str = '';
@@ -106,6 +89,42 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>选择SDK下载文件</label>
+                        <select id="js_modal_download" class="form-control" multiple>
+                            <?php
+                            $options = $this->options;
+                            $str = '';
+
+                            foreach ($options as $option)
+                            {
+                                $id= $option['id'];
+                                $name= $option['name'];
+                                $subHtml = "";
+                                if($option['list'])
+                                {
+                                    foreach ($option['list'] as $item){
+                                        $sId= $item['id'];
+                                        $sName= $item['title'];
+                                        $subHtml.="<option value={$sId}>{$name}-{$sName}</option>";
+                                    }
+                                }
+
+                                $str.="
+                                    <optgroup label='{$name}'>
+                                        {$subHtml}
+                                    </optgroup>
+                                    ";
+                            }
+                            echo $str;
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-8">
                     <div class="form-group ">
                         <label for="message-text" class="control-label">产品图</label>
@@ -127,7 +146,7 @@
                             <div class="progress-bar progress-bar-success" style="width:0%;"></div>
                         </div>
                     </div>
-                    <img class="js_img_preview img-preview gone margin-top-20" src="" >
+                    <img class="js_img_preview img-preview gone margin-top-20" style="max-height: 50px;" src="" >
                 </div>
             </div>
 
@@ -143,7 +162,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="control-label">产品特点</label>
-                        <textarea  id="js_modal_desc" class="form-control" rows="6"></textarea>
+                        <textarea  id="js_modal_feature" class="form-control" rows="6"></textarea>
                     </div>
                 </div>
             </div>
@@ -151,52 +170,46 @@
                 <div class="col-md-12">
                     <label class="control-label">
                         基本参数
-                        <button type="button" class="btn default btn-sm min-width-80 margin-left-25">添加</button>
+                        <button type="button" class="btn default btn-sm js_modal_params_add_btn min-width-80 margin-left-25">添加</button>
                     </label>
-                    <div class="js_modal_feature_list">
-                        <div class="js_modal_feature_item">
-                            <div class="col-md-4">
-                                <div class="form-group ">
-                                    <input type="text" class="form-control " placeholder="请输入参数名" >
+                    <div class="js_modal_params">
+                        <div class="gone jmp_node">
+                            <div class="js_modal_param">
+                                <div class="col-md-4 gone">
+                                    <div class="form-group ">
+                                        <input type="hidden" class="form-control" placeholder="id" >
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group ">
-                                    <input type="text" class="form-control " placeholder="请输入参数值" >
+                                <div class="col-md-3">
+                                    <div class="form-group ">
+                                        <input type="text" class="form-control " placeholder="请输入参数名" >
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <input type="text" class="form-control " placeholder="请输入备注" >
+                                <div class="col-md-3">
+                                    <div class="form-group ">
+                                        <input type="text" class="form-control " placeholder="请输入参数值" >
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <button type="button" class="btn red"><i class="icon-close"></i> 删除</button>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control " placeholder="请输入备注" >
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <a href="javascript:;" class="btn default green js_up">
+                                            <i class="fa fa-arrow-up"></i>
+                                        </a>
+                                        <a href="javascript:;" class="btn default  js_down">
+                                            <i class="fa fa-arrow-down"></i>
+                                        </a>
+                                        <button type="button" class="btn red jmp_delete"><i class="icon-close"></i> 删除</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="js_modal_feature_item">
-                            <div class="col-md-4">
-                                <div class="form-group ">
-                                    <input type="text" class="form-control " placeholder="请输入参数名" >
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group ">
-                                    <input type="text" class="form-control " placeholder="请输入参数值" >
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <input type="text" class="form-control " placeholder="请输入备注" >
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <button type="button" class="btn red"><i class="icon-close"></i> 删除</button>
-                                </div>
-                            </div>
+                        <div class="jmp_list">
+
                         </div>
 
                     </div>

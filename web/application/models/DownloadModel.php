@@ -162,6 +162,35 @@ class DownloadModel extends Halo_Model
         }
     }
 
+    /**
+     * 获取分组的download options
+     * @return array
+     */
+    public function getDownloadOptions()
+    {
+        $types=  $this->web_slave->getResultsByCondition('lock_types','','id,name');
+        $typeMap = [];
+        if($types)
+        {
+            foreach ($types as $type)
+            {
+                $typeMap[$type['id']] = $type;
+            }
+            $result = $this->web_slave->getResultsByCondition($this->tbl_name,HaloPdo::condition('id>0'),'id,lock_type_id,title');
+            if($result)
+            {
+                foreach ($result as $v)
+                {
+                    $typeId = $v['lock_type_id'];
+                    if(array_key_exists($typeId,$typeMap)){
+                        $typeMap[$typeId]['list'][] = $v;
+                    }
+                }
+            }
+        }
+        return $typeMap;
+    }
+
 }
 
 

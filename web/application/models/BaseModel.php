@@ -7,7 +7,7 @@
  * Time: 17:55
  */
 
-class DownloadModel extends Halo_Model
+class BaseModel extends Halo_Model
 {
 
     private $web;

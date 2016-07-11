@@ -112,6 +112,8 @@ class ManageController extends BaseController
         }
     }
 
+
+
     /**
      * 新闻
      */
@@ -211,6 +213,6 @@ class ManageController extends BaseController
     {
         $this->view->page='manage-map-page';
     }
-
+    
 
 }

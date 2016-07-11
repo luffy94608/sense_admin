@@ -7,11 +7,20 @@
  * Time: 17:55
  */
 
-class NewsModel extends Halo_Model
+class DownloadModel extends Halo_Model
 {
 
     private $web;
     private $web_slave;
+    public $tbl_name = 'downloads';
+    public $timestamps = true;
+    public $keyMap = array(
+        'title'=>'title',
+        'lock_type_id'=>'lock_type_id',
+        'btn_name'=>'btn_name',
+        'content'=>'content',
+        'url'=>'url',
+    );
 
     public function __construct()
     {
@@ -29,14 +38,21 @@ class NewsModel extends Halo_Model
     public function create($params)
     {
         $timeStr = date('Y-m-d H:i:s');
-        $params=array(
-            'title'=>$params['title'],
-            'time'=>$params['time'],
-            'content'=>$params['content'],
-            'created_at'=>$timeStr,
-            'updated_at'=>$timeStr,
-        );
-        $result = $this->web->insertTable('company_news',$params);
+        $data = [];
+        $maps  = $this->keyMap;
+        foreach($maps as $k=>$v)
+        {
+            if(array_key_exists($v,$params) && $v!==false)
+            {
+                $data[$k]=$params[$v];
+            }
+        }
+        if($this->timestamps){
+            $data['created_at'] = $timeStr;
+            $data['updated_at'] = $timeStr;
+        }
+
+        $result = $this->web->insertTable($this->tbl_name,$data);
         return $result;
     }
 
@@ -50,11 +66,7 @@ class NewsModel extends Halo_Model
     {
         if(!empty($params))
         {
-            $map=array(
-                'title'=>'title',
-                'time'=>'time',
-                'content'=>'content',
-            );
+            $map=$this->keyMap;
             $data=array();
             foreach($params as $k=>$v)
             {
@@ -63,8 +75,10 @@ class NewsModel extends Halo_Model
                     $data[$map[$k]]=$v;
                 }
             }
-            $data['updated_at'] = date('Y-m-d H:i:s');
-            return $this->web->updateTable('company_news',$data,HaloPdo::condition('id = ?',$id));
+            if($this->timestamps){
+                $data['updated_at'] = date('Y-m-d H:i:s');
+            }
+            return $this->web->updateTable($this->tbl_name,$data,HaloPdo::condition('id = ?',$id));
         }
         return false;
     }
@@ -75,20 +89,23 @@ class NewsModel extends Halo_Model
      */
     public function delete($id)
     {
-        return  $this->web->delRowByCondition2('company_news',HaloPdo::condition('id = ?',$id));
+        return  $this->web->delRowByCondition2($this->tbl_name,HaloPdo::condition('id = ?',$id));
     }
 
 
     /**
      * 获取 列表
-     * @param int $offset
-     * @param int $length
      * @return array
      */
-    public function getNewsList($offset=0,$length =20)
+    public function getList()
     {
-        $result = $this->web_slave->getResultsByCondition('company_news',sprintf('id>0  ORDER BY updated_at DESC LIMIT %d OFFSET %d ',$length,$offset));
-        $total = $this->web_slave->getCountByCondition('company_news',HaloPdo::condition('id>0'));
+        $result = $this->web_slave->getResultsByCondition($this->tbl_name,HaloPdo::condition('id>0  ORDER BY updated_at '));
+        $total = $this->web_slave->getCountByCondition($this->tbl_name,HaloPdo::condition('id>0'));
+        if($result)
+        {
+            $this->addDownloadTypeInfo($result);
+        }
+
         $data = [
           'list'=>$result ? $result : [],
           'total'=>intval($total),
@@ -101,10 +118,48 @@ class NewsModel extends Halo_Model
      * @param $id
      * @return array|bool|mixed|null|string
      */
-    public function getNewsDetail($id)
+    public function getDetail($id)
     {
-        $result = $this->web_slave->getRowByCondition('company_news',HaloPdo::condition('id= ?',$id));
+        $result = $this->web_slave->getRowByCondition($this->tbl_name,HaloPdo::condition('id= ?',$id));
+        if($result)
+        {
+            $tmp = [$result];
+            $this->addDownloadTypeInfo($tmp);
+            $result = $tmp[0];
+        }
         return $result;
+    }
+
+    /**
+     * 添加type info
+     * @param $result
+     */
+    public function addDownloadTypeInfo(&$result)
+    {
+        $typeIds = [];
+        foreach ($result as $v)
+        {
+            $typeIds[] = $v['lock_type_id'];
+        }
+        $typeIds = array_unique($typeIds);
+        $types = $this->web_slave->getResultsByCondition('lock_types',sprintf('id IN (%s)',implode(',',$typeIds)),'id,name');
+        $typeMap = [];
+        if($types)
+        {
+            foreach ($types as $type)
+            {
+                $typeMap[$type['id']] = $type;
+            }
+        }
+
+        foreach ($result as &$v)
+        {
+            $tmpTypeId = $v['lock_type_id'];
+            if(array_key_exists($tmpTypeId,$typeMap))
+            {
+                $v['type'] = $typeMap[$tmpTypeId];
+            }
+        }
     }
 
 }

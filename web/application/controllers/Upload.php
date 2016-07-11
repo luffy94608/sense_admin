@@ -17,18 +17,26 @@ class UploadController extends BaseController
      */
     public function uploadImageAction()
     {
+        ini_set('max_execution_time',60*60*20);
         $cid = $this->cid;
+        $map = [
+            MediaModel::MediaTypeImg,
+            MediaModel::MediaTypeFile,
+        ];
+        $type = $this->getLegalParam('type','enum',$map,MediaModel::MediaTypeImg);
         if(empty($cid))
         {
             $this->inputParamErrorResult();
         }
 
         $upload = new MediaModel();
-        $res = $upload->newMsgMedia($upload::MediaTypeImg);
+        $res = $upload->newMsgMedia($type);
 
-        $config = Yaf_Registry::get('config');
-        $host = $config->img->host;
-        $res['img']=$host.$res['url'];
+        $host = HolloEnv::getImgHost();
+        $url = $host.$res['url'];
+        $res['path']= $res['url'];
+        $res['url']= $url;
+        $res['img']= $url;
         $this->inputResult($res);
 
     }

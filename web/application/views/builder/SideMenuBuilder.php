@@ -23,25 +23,34 @@ class SideMenuBuilder
                 'children'=>array(
                     array('href'=>'/manage/menu','title'=>'导航栏'),
                     array('href'=>'/manage/map','title'=>'网站地图'),
-                    array('href'=>'/manage/download','title'=>'下载配置'),
+                    array('href'=>'/manage/solution','title'=>'解决方案'),
                     array('href'=>'/manage/recruit','title'=>'招聘配置'),
                     array('href'=>'/manage/news','title'=>'新闻配置'),
+                )),
+            array(
+                'module'=>'lock',
+                'title'=>'加密锁管理',
+                'icon'=>'  icon-lock',
+                'children'=>array(
+                    array('href'=>'/lock/type','title'=>'产品类别'),
+                    array('href'=>'/lock/download','title'=>'资源下载'),
+                    array('href'=>'/lock/list','title'=>'产品管理'),
                 )),
             array(
                 'module'=>'home',
                 'title'=>'首页管理',
                 'icon'=>'icon-home',
                 'children'=>array(
-                    array('href'=>'/home/banner','title'=>'banner配置'),
+                    array('href'=>'/home/banner','title'=>'轮播图配置'),
                     array('href'=>'/home/list','title'=>'首页列表'),
                     array('href'=>'/home/partner','title'=>'合作伙伴'),
                 )),
             array(
                 'module'=>'page',
-                'title'=>'页面管理',
+                'title'=>'单页管理',
                 'icon'=>'  icon-doc',
                 'children'=>array(
-                    array('href'=>'/order/list','title'=>'页面列表'),
+                    array('href'=>'/order/list','title'=>'单页列表'),
                 )),
             array(
                 'module'=>'account',

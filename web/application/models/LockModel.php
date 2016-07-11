@@ -7,16 +7,19 @@
  * Time: 17:55
  */
 
-class DownloadModel extends Halo_Model
+class LockModel extends Halo_Model
 {
 
     private $web;
     private $web_slave;
-    public $tbl_name = 'downloads';
+    public $tbl_type_name = 'lock_types';
+    public $tbl_name = 'locks';
     public $timestamps = true;
-    public $keyMap = array(
+
+    public $keyTypeMap = array(
+        'name'=>'name',
         'title'=>'title',
-        'url'=>'url',
+        'img'=>'img',
         'content'=>'content',
     );
 
@@ -27,17 +30,16 @@ class DownloadModel extends Halo_Model
         $this->web_slave = DataCenter::getDb('web_slave');
     }
 
-
     /**
-     * 修改名称
+     * 修改类别
      * @param $params
      * @return bool|int
      */
-    public function create($params)
+    public function createType($params)
     {
         $timeStr = date('Y-m-d H:i:s');
         $data = [];
-        $maps  = $this->keyMap;
+        $maps  = $this->keyTypeMap;
         foreach($maps as $k=>$v)
         {
             if(array_key_exists($v,$params) && $v!==false)
@@ -50,21 +52,21 @@ class DownloadModel extends Halo_Model
             $data['updated_at'] = $timeStr;
         }
 
-        $result = $this->web->insertTable($this->tbl_name,$data);
+        $result = $this->web->insertTable($this->tbl_type_name,$data);
         return $result;
     }
 
     /**
-     * 更新
+     * 更新类别
      * @param $id
      * @param $params
      * @return bool|int
      */
-    public function update($id,$params )
+    public function updateType($id,$params )
     {
         if(!empty($params))
         {
-            $map=$this->keyMap;
+            $map=$this->keyTypeMap;
             $data=array();
             foreach($params as $k=>$v)
             {
@@ -76,31 +78,28 @@ class DownloadModel extends Halo_Model
             if($this->timestamps){
                 $data['updated_at'] = date('Y-m-d H:i:s');
             }
-            return $this->web->updateTable($this->tbl_name,$data,HaloPdo::condition('id = ?',$id));
+            return $this->web->updateTable($this->tbl_type_name,$data,HaloPdo::condition('id = ?',$id));
         }
         return false;
     }
     /**
-     * 删除
+     * 删除类别
      * @param $id
      * @return int
      */
-    public function delete($id)
+    public function deleteType($id)
     {
-        return  $this->web->delRowByCondition2($this->tbl_name,HaloPdo::condition('id = ?',$id));
+        return  $this->web->delRowByCondition2($this->tbl_type_name,HaloPdo::condition('id = ?',$id));
     }
 
-
     /**
-     * 获取 列表
-     * @param int $offset
-     * @param int $length
+     * 获取类别 列表
      * @return array
      */
-    public function getList($offset=0,$length =20)
+    public function getTypeList()
     {
-        $result = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('id>0  ORDER BY updated_at DESC LIMIT %d OFFSET %d ',$length,$offset));
-        $total = $this->web_slave->getCountByCondition($this->tbl_name,HaloPdo::condition('id>0'));
+        $result = $this->web_slave->getResultsByCondition($this->tbl_type_name,sprintf('id>0  ORDER BY updated_at DESC'));
+        $total = $this->web_slave->getCountByCondition($this->tbl_type_name,HaloPdo::condition('id>0'));
         $data = [
           'list'=>$result ? $result : [],
           'total'=>intval($total),
@@ -109,13 +108,13 @@ class DownloadModel extends Halo_Model
     }
 
     /**
-     * 获取 详情
+     * 获取类别 详情
      * @param $id
      * @return array|bool|mixed|null|string
      */
-    public function getDetail($id)
+    public function getTypeDetail($id)
     {
-        $result = $this->web_slave->getRowByCondition($this->tbl_name,HaloPdo::condition('id= ?',$id));
+        $result = $this->web_slave->getRowByCondition($this->tbl_type_name,HaloPdo::condition('id= ?',$id));
         return $result;
     }
 

@@ -55,8 +55,8 @@ class MediaModel
             case self::MediaTypeFile:
             {
                 $folderPath = '/file/';
-                $type=array("txt","xml","pdf",'zip','doc','ppt','xls','docx','pptx','xlsx');
-                $maxSize =  1024*1024*2;
+                $type=array("txt","xml","pdf",'zip','doc','ppt','xls','docx','pptx','xlsx','rar');
+                $maxSize =  1024*1024*100;
                 break;
             }
             case self::MediaTypeVoice:

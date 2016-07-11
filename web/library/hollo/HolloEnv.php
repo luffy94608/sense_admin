@@ -39,38 +39,6 @@ class HolloEnv
     }
 
     /**
-     * 判断是否百度
-     */
-    public static function isBaiduCompany($cid)
-    {
-
-        $companyModel=new CompanyModel();
-        $bcid=$companyModel->getbaiduCid();
-
-        if($bcid==$cid)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-
-    }
-
-    /**
-     * 根据座位号生成座位信息
-     * @param $num
-     * @return string
-     */
-    public static function toBuildSeatTitle($num)
-    {
-        $seatMap=array('A','B','C','D');
-        $seatTitle=(floor($num/4)+1).'排'.($seatMap[$num%4]).'座' ;
-        return $seatTitle;
-    }
-
-    /**
      * 获取用户uid
      * @return string
      */
@@ -122,5 +90,15 @@ class HolloEnv
             }
         }
         return $user_info;
+    }
+
+    /**
+     * 获取静态资源host
+     */
+    public static function getImgHost()
+    {
+        $config = Yaf_Registry::get('config');
+        $host = $config->img->host;
+        return $host;
     }
 } 

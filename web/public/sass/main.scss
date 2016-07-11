@@ -55,18 +55,48 @@
 .display-inline-block{
   display: inline-block;
 }
-.margin-5{
-  margin: 5px!important;
+
+.visibility-hidden{
+  visibility: hidden;
 }
-.margin-bottom-10{
-  margin-bottom: 10px!important;
+.visibility-show{
+  visibility: visible;
 }
-.margin-bottom-20{
-  margin-bottom: 20px!important;
+
+@for $i from 1 through 20{
+  $val: $i * 5;
+  .margin-#{$val}{
+    margin: #{$val}px!important;
+  }
+  .padding-#{$val}{
+    padding: #{$val}px!important;
+  }
+  .margin-top-#{$val}{
+    margin-top: #{$val}px!important;
+  }
+  .margin-right-#{$val}{
+    margin-right: #{$val}px!important;
+  }
+  .margin-bottom-#{$val}{
+    margin-bottom: #{$val}px!important;
+  }
+  .margin-left-#{$val}{
+    margin-left: #{$val}px!important;
+  }
+  .padding-top-#{$val}{
+    padding-top: #{$val}px!important;
+  }
+  .padding-right-#{$val}{
+    padding-right: #{$val}px!important;
+  }
+  .padding-bottom-#{$val}{
+    padding-bottom: #{$val}px!important;
+  }
+  .padding-left-#{$val}{
+    padding-left: #{$val}px!important;
+  }
 }
-.padding-top-10{
-  padding-top: 10px!important;
-}
+
 
 .bus-min-width-450 {
   min-width: 450px !important;
@@ -96,44 +126,6 @@
   }
 }
 
-//车辆
-.bus-status-map{
-  position: relative;
-  width: 258px;
-  height: 510px;
-  margin: 0 auto;
-  background:url('../images/car2.png') no-repeat center;
-  .position-item{
-    position: absolute;
-    width: 100px;
-    text-align: center;
-    @include border-radius(2px!important);
-    &.position-1{
-      left: -80px;
-      top: 90px;
-    }
-    &.position-2{
-      right: -80px;
-      top: 90px;
-    }
-    &.position-3{
-      left: -80px;
-      bottom: 0;
-    }
-    &.position-4{
-      right: -80px;
-      bottom: 0;
-    }
-    &.position-5{
-      right: -80px;
-      bottom: 170px;
-    }
-    &.position-6{
-      left: -80px;
-      bottom: 170px;
-    }
-  }
-}
 .img-preview{
   max-width: 100%;
 }

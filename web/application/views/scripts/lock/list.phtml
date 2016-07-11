@@ -2,7 +2,7 @@
     <div class="portlet box black">
         <div class="portlet-title">
             <div class="caption">
-                下载设置
+                产品列表
             </div>
             <div class="tools">
 
@@ -10,7 +10,7 @@
             <div class="actions">
                 <a href="javascript:;" class="btn btn-default btn-sm js_edit js_new_btn ">
                     <i class="fa fa-plus"></i>
-                    添加下载
+                    添加产品
                 </a>
             </div>
         </div>
@@ -19,12 +19,14 @@
                 <table class="table table-striped table-bordered table-hover table-middle" align="center">
                     <thead>
                     <tr>
-                        <th class="min-width-100">产品</th>
-                        <th class="min-width-100">更新时间</th>
+                        <th class="min-width-100">产品图</th>
+                        <th class="min-width-100">产品分类</th>
+                        <th class="min-width-100">版本</th>
                         <th >操作</th>
                     </tr>
                     </thead>
                     <tbody class="js_table_list" id="list">
+                    <?php echo $this->html;?>
                     </tbody>
                 </table>
             </div>
@@ -43,46 +45,164 @@
         </div>
         <div class="modal-body ">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label class="control-label">标题</label>
-                        <input type="text" id="js_modal_title" class="form-control" placeholder="">
+                        <label class="control-label">版本名称</label>
+                        <input type="text" id="js_modal_version" class="form-control" placeholder="">
                         <span class="help-block"></span>
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label class="control-label">描述</label>
-                        <textarea  id="js_modal_content" class="form-control" rows="5   "></textarea>
+                        <label class="control-label">产品类别</label>
+                        <select id="js_modal_type" class="form-control">
+                            <?php
+                            $options = $this->options;
+                            $str = '';
+                            foreach ($options as $option)
+                            {
+                                $id= $option['id'];
+                                $name= $option['name'];
+                                $str.="<option value={$id}>{$name}</option>";
+                            }
+                            echo $str;
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>资源下载</label>
+                        <select id="js_modal_download" class="form-control">
+                            <?php
+                            $options = $this->options;
+                            $str = '';
+                            foreach ($options as $option)
+                            {
+                                $id= $option['id'];
+                                $name= $option['name'];
+                                $str.="<option value={$id}>{$name}</option>";
+                            }
+                            echo $str;
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group form-md-checkboxes">
+                        <label>&nbsp;</label>
+                        <div class="md-checkbox-inline">
+                            <div class="md-checkbox">
+                                <input type="checkbox" id="js_modal_status" class="md-check">
+                                <label for="js_modal_status">
+                                    <span class="inc"></span>
+                                    <span class="check"></span>
+                                    <span class="box"></span>
+                                    是否试用
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-8">
-                    <div class="form-group">
-                        <label for="message-text" class="control-label">下载文件</label>
-                        <input type="text" class="form-control" id="js_modal_url">
+                    <div class="form-group ">
+                        <label for="message-text" class="control-label">产品图</label>
+                        <input type="text" class="form-control" id="js_modal_img">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="message-text" class="control-label">&nbsp;</label>
-                        <button type="button" class="js_upload_image btn default form-control">上传</button>
+                        <button type="button" class="js_upload_image btn  form-control">上传图片</button>
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="visibility-hidden js_progress_section">
+<!--                        <p class="size">上传中</p>-->
+                        <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="height: 5px;">
+                            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                        </div>
+                    </div>
+                    <img class="js_img_preview img-preview gone margin-top-20" src="" >
+                </div>
+            </div>
 
-            </div>
-            <div class="form-group">
-                <div class="gone js_progress_section">
-                    <p class="size">上传中</p>
-                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="control-label">产品信息</label>
+                        <textarea  id="js_modal_desc" class="form-control" rows="6"></textarea>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="control-label">产品特点</label>
+                        <textarea  id="js_modal_desc" class="form-control" rows="6"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="control-label">
+                        基本参数
+                        <button type="button" class="btn default btn-sm min-width-80 margin-left-25">添加</button>
+                    </label>
+                    <div class="js_modal_feature_list">
+                        <div class="js_modal_feature_item">
+                            <div class="col-md-4">
+                                <div class="form-group ">
+                                    <input type="text" class="form-control " placeholder="请输入参数名" >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group ">
+                                    <input type="text" class="form-control " placeholder="请输入参数值" >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="text" class="form-control " placeholder="请输入备注" >
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button type="button" class="btn red"><i class="icon-close"></i> 删除</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="js_modal_feature_item">
+                            <div class="col-md-4">
+                                <div class="form-group ">
+                                    <input type="text" class="form-control " placeholder="请输入参数名" >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group ">
+                                    <input type="text" class="form-control " placeholder="请输入参数值" >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="text" class="form-control " placeholder="请输入备注" >
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button type="button" class="btn red"><i class="icon-close"></i> 删除</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
 
         </div>
         <div class="modal-footer">

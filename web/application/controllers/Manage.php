@@ -11,9 +11,24 @@
 class ManageController extends BaseController
 {
 
+    /**
+     * @var BaseModel
+     */
+    public $solutionModel;
+
     public function init()
     {
         parent::init();
+        $map = [
+            'name'=>'name',
+            'title'=>'title',
+            'banner'=>'banner',
+            'pic'=>'pic',
+            'demand'=>'demand',
+            'plan'=>'plan',
+            'advantage'=>'advantage',
+        ];
+        $this->solutionModel=  new BaseModel('solutions',$map);
     }
 
     /**
@@ -204,6 +219,91 @@ class ManageController extends BaseController
         }
     }
 
+    /**
+     * 解决方案
+     */
+    public function solutionAction()
+    {
+        $this->view->page='manage-solution-page';
+
+
+        $list = $this->solutionModel->getList();
+        $html = ManageBuilder::toBuildSolutionListHtml($list['list']);
+        $this->view->html = $html;
+    }
+
+
+    /**
+     * 创建或者修改
+     */
+    public function updateSolutionAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['name']=$this->getLegalParam('name','str');
+        $params['title']=$this->getLegalParam('title','str');
+        $params['banner']=$this->getLegalParam('banner','str');
+        $params['pic']=$this->getLegalParam('pic','str');
+        $params['demand']=$this->getLegalParam('demand','str');
+        $params['plan']=$this->getLegalParam('plan','str');
+        $params['advantage']=$this->getLegalParam('advantage','str');
+
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $id = $this->getLegalParam('id','str');
+
+        $model=  $this->solutionModel;
+        if (empty($id))
+        {
+            $result = $model->create($params);
+            $params['id'] = $result;
+        }
+        else
+        {
+            $result = $model->update($id,$params);
+            $params['id'] = $id;
+        }
+
+        if($result>0)
+        {
+            $detail = $model->getDetail($params['id']);
+            $html = ManageBuilder::toBuildSolutionItem($detail);
+            $this->inputResult($html);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 删除
+     */
+    public function deleteSolutionAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['id']=$this->getLegalParam('id','str');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  $this->solutionModel;
+        $result = $model->delete($params['id']);
+
+        if($result>0)
+        {
+            $this->inputResult($result);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
 
     //
     /**

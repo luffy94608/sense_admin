@@ -14,14 +14,12 @@ class BaseModel extends Halo_Model
     private $web_slave;
     public $tbl_name = 'downloads';
     public $timestamps = true;
-    public $keyMap = array(
-        'title'=>'title',
-        'url'=>'url',
-        'content'=>'content',
-    );
+    public $keyMap = [];
 
-    public function __construct()
+    public function __construct($tblName,$map)
     {
+        $this->tbl_name = $tblName;
+        $this->keyMap = $map;
         parent::__construct();
         $this->web = DataCenter::getDb('web');
         $this->web_slave = DataCenter::getDb('web_slave');

@@ -121,6 +121,64 @@ class ManageBuilder
 
         return $html;
     }
-    
+
+    /**
+     * 生成新闻 list html
+     * @param $list
+     * @return string
+     */
+    public static function toBuildSolutionListHtml($list)
+    {
+        $html = '';
+        if(!empty($list))
+        {
+            foreach($list as $v){
+                $html.=self::toBuildSolutionItem($v);
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     *生成新闻 list item
+     * @param $item
+     * @return string
+     */
+    public static function toBuildSolutionItem($item)
+    {
+        $html = '';
+        $info=json_encode($item);
+        $id = $item['id'];
+        $name = $item['name'];
+        $title = $item['title'];
+        $pic = $item['banner'];
+        if(stripos($pic,'http://')===false && stripos($pic,'https://')===false && stripos($pic,'ftp://')===false){
+            $host = HolloEnv::getImgHost();
+            $pic = $host.$pic;
+            $pic = "<img src='{$pic}' class='table-img'>";
+        }
+
+        $html.="
+                <tr  data-info='{$info}' data-id='{$id}'>
+                    <td>{$pic}</td>
+                    <td>{$name}</td>
+                    <td>{$title}</td>
+                    <td>
+                        <a href='javascript:;' class='btn default btn-sm blue js_edit'>
+                            <i class='fa fa-edit'></i> 
+                            编辑 
+                        </a>
+                       <a href='javascript:;' class='btn default btn-sm red js_delete'>
+                            <i class='fa fa-trash-o'></i> 
+                            删除 
+                        </a>
+                    </td>
+                </tr>
+            ";
+
+        return $html;
+    }
+
 
 }

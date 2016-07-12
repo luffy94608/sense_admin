@@ -180,5 +180,62 @@ class ManageBuilder
         return $html;
     }
 
+    /**
+     *  list html
+     * @param $list
+     * @return string
+     */
+    public static function toBuildRouteListHtml($list)
+    {
+        $html = '';
+        if(!empty($list))
+        {
+            foreach($list as $v){
+                $html.=self::toBuildRouteItem($v);
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     * list item
+     * @param $item
+     * @return string
+     */
+    public static function toBuildRouteItem($item)
+    {
+        $html = '';
+        $info=json_encode($item);
+        $id = $item['id'];
+        $name = $item['name'];
+
+        $html.="
+                <tr  data-info='{$info}' data-id='{$id}'>
+                    <td>{$name}</td>
+                    <td>
+                         <a href=\"javascript:;\" class=\"btn default green js_up\">
+                            <i class=\"fa fa-arrow-up\"></i>
+                        </a>
+                        <a href=\"javascript:;\" class=\"btn default  js_down\">
+                            <i class=\"fa fa-arrow-down\"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a href='javascript:;' class='btn default btn-sm blue js_edit'>
+                            <i class='fa fa-edit'></i> 
+                            编辑 
+                        </a>
+                       <a href='javascript:;' class='btn default btn-sm red js_delete'>
+                            <i class='fa fa-trash-o'></i> 
+                            删除 
+                        </a>
+                    </td>
+                </tr>
+            ";
+
+        return $html;
+    }
+
 
 }

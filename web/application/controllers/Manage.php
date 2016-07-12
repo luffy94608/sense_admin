@@ -225,8 +225,6 @@ class ManageController extends BaseController
     public function solutionAction()
     {
         $this->view->page='manage-solution-page';
-
-
         $list = $this->solutionModel->getList();
         $html = ManageBuilder::toBuildSolutionListHtml($list['list']);
         $this->view->html = $html;
@@ -303,6 +301,101 @@ class ManageController extends BaseController
         {
             $this->inputErrorWithDesc('操作失败');
         }
+    }
+
+    /**
+     * 成长历程
+     */
+    public function routeAction()
+    {
+        $this->view->page='manage-route-page';
+
+        $model = new RouteModel();
+        $list = $model->getList();
+        $html = ManageBuilder::toBuildRouteListHtml($list['list']);
+        $this->view->html = $html;
+    }
+
+    /**
+     * 创建或者修改
+     */
+    public function updateRouteAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['name']=$this->getLegalParam('name','str');
+        $params['params']=$this->getLegalParam('params','raw');
+
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $id = $this->getLegalParam('id','str');
+
+        $model=  new RouteModel();
+        if (empty($id))
+        {
+            $result = $model->create($params);
+            $params['id'] = $result;
+        }
+        else
+        {
+            $result = $model->update($id,$params);
+            $params['id'] = $id;
+        }
+
+        if($result>0)
+        {
+            $detail = $model->getDetail($params['id']);
+            $html = ManageBuilder::toBuildRouteItem($detail);
+            $this->inputResult($html);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 删除
+     */
+    public function deleteRouteAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['id']=$this->getLegalParam('id','str');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new RouteModel();
+        $result = $model->delete($params['id']);
+
+        if($result>0)
+        {
+            $this->inputResult($result);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 保存排序
+     */
+    public function saveRouteSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new RouteModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
     }
 
     //

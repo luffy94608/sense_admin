@@ -1,0 +1,106 @@
+<div class="page-content">
+    <div class="portlet box black">
+        <div class="portlet-title">
+            <div class="caption">
+                成长历程
+            </div>
+            <div class="tools">
+
+            </div>
+            <div class="actions">
+                <a href="javascript:;" class="btn btn-default btn-sm js_edit js_new_btn ">
+                    <i class="fa fa-plus"></i>
+                    添加
+                </a>
+                <a href="javascript:;" class="btn btn-default btn-sm js_sort_save">
+                    <i class="fa fa-save"></i> 保存排序
+                </a>
+            </div>
+        </div>
+        <div class="portlet-body" id="wrapperPageList">
+            <div class="table-scrollable" >
+                <table class="table table-striped table-bordered table-hover table-middle" align="center">
+                    <thead>
+                    <tr>
+                        <th class="min-width-100">事件名称</th>
+                        <th class="min-width-100">排序</th>
+                        <th >操作</th>
+                    </tr>
+                    </thead>
+                    <tbody class="js_table_list" id="list">
+                    <?php echo $this->html;?>
+                    </tbody>
+                </table>
+            </div>
+            <div id='list_count' class="gone"></div>
+            <?php echo BaseBuilder::createPageIndicator();?>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-dialog modal fade modal-scroll" id="editOrAddModal" tabindex="-1"  data-width="80%">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title" data-new="添加" data-edit="编辑"></h4>
+        </div>
+        <div class="modal-body ">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="control-label">事件名称</label>
+                        <input type="text" id="js_modal_name" class="form-control" placeholder="">
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="control-label">
+                        事件内容
+                        <button type="button" class="btn default btn-sm js_modal_params_add_btn min-width-80 margin-left-25">添加</button>
+                    </label>
+                    <div class="js_modal_params">
+                        <div class="gone jmp_node">
+                            <div class="js_modal_param">
+                                <div class="col-md-4 gone">
+                                    <div class="form-group ">
+                                        <input type="hidden" class="form-control" placeholder="id" >
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="form-group ">
+                                        <input type="text" class="form-control " placeholder="请输入事件内容" >
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <a href="javascript:;" class="btn default green js_up">
+                                            <i class="fa fa-arrow-up"></i>
+                                        </a>
+                                        <a href="javascript:;" class="btn default  js_down">
+                                            <i class="fa fa-arrow-down"></i>
+                                        </a>
+                                        <button type="button" class="btn red jmp_delete"><i class="icon-close"></i> 删除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="jmp_list">
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn default js_cancel" data-dismiss="modal">取消</button>
+            <button type="button" class="btn blue js_submit">提交</button>
+        </div>
+    </div>
+</div>

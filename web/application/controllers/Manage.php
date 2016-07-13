@@ -317,7 +317,7 @@ class ManageController extends BaseController
     }
 
     /**
-     * 创建或者修改
+     * 创建或者修改 成长历程
      */
     public function updateRouteAjaxAction()
     {
@@ -358,7 +358,7 @@ class ManageController extends BaseController
     }
 
     /**
-     * 删除
+     * 删除 成长历程
      */
     public function deleteRouteAjaxAction()
     {
@@ -384,7 +384,7 @@ class ManageController extends BaseController
     }
 
     /**
-     * 保存排序
+     * 保存排序 成长历程
      */
     public function saveRouteSortAjaxAction()
     {
@@ -398,7 +398,98 @@ class ManageController extends BaseController
         $this->inputResult();
     }
 
-    //
+    /**
+     * 知识和产权
+     */
+    public function certAction()
+    {
+        $this->view->page='manage-cert-page';
+    }
+
+
+    /**
+     * 创建或者修改 知识和产权
+     */
+    public function updateCertAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['name']=$this->getLegalParam('name','str');
+        $params['params']=$this->getLegalParam('params','raw');
+
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $id = $this->getLegalParam('id','str');
+
+        $model=  new CertsModel();
+        if (empty($id))
+        {
+            $result = $model->create($params);
+            $params['id'] = $result;
+        }
+        else
+        {
+            $result = $model->update($id,$params);
+            $params['id'] = $id;
+        }
+
+        if($result>0)
+        {
+            $detail = $model->getDetail($params['id']);
+            $html = ManageBuilder::toBuildCertsItem($detail);
+            $this->inputResult($html);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 删除 知识和产权
+     */
+    public function deleteCertAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['id']=$this->getLegalParam('id','str');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new CertsModel();
+        $result = $model->delete($params['id']);
+
+        if($result>0)
+        {
+            $this->inputResult($result);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 保存排序 知识和产权
+     */
+    public function saveCertSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new CertsModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
+
     /**
      * 网站地图
      */

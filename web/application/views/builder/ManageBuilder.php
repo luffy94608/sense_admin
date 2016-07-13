@@ -267,9 +267,15 @@ class ManageBuilder
         $info=json_encode($item);
         $id = $item['id'];
         $name = $item['name'];
-
+        $pic = $item['pic'];
+        if(stripos($pic,'http://')===false && stripos($pic,'https://')===false && stripos($pic,'ftp://')===false){
+            $host = HolloEnv::getImgHost();
+            $pic = $host.$pic;
+            $pic = "<img src='{$pic}' class='table-img'>";
+        }
         $html.="
                 <tr  data-info='{$info}' data-id='{$id}'>
+                    <td>{$pic}</td>
                     <td>{$name}</td>
                     <td>
                          <a href=\"javascript:;\" class=\"btn default green js_up\">

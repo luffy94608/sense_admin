@@ -406,6 +406,21 @@ class ManageController extends BaseController
         $this->view->page='manage-cert-page';
     }
 
+    public function getCertListAjaxAction()
+    {
+        $params = $this->getPageParams();
+        $params['type'] = $this->getLegalParam('type','enum',[0,1],0);
+        $model=  new CertsModel();
+        $result = $model->getList($params['type'],$params['offset'],$params['length']);
+        $html  = ManageBuilder::toBuildCertsListHtml($result['list']);
+
+        $data = [
+            'total' =>intval($result['total']),
+            'html' =>$html,
+        ];
+        $this->inputResult($data);
+    }
+
 
     /**
      * 创建或者修改 知识和产权
@@ -416,7 +431,8 @@ class ManageController extends BaseController
         $params['cid']=$this->cid;
 
         $params['name']=$this->getLegalParam('name','str');
-        $params['params']=$this->getLegalParam('params','raw');
+        $params['pic']=$this->getLegalParam('pic','str');
+        $params['type'] = $this->getLegalParam('type','enum',[0,1],0);
 
         if(in_array(false,$params,true))
         {

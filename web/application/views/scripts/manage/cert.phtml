@@ -21,12 +21,13 @@
         <div class="portlet-body" id="wrapperPageList">
             <div class="tabbable-line">
                 <ul class="nav nav-tabs">
-                    <li class="fr active" data-id="1">
-                        <a href="javascript:void(0);" data-toggle="tab" aria-expanded="true">公司资质</a>
+                    <li class="fr active" data-id="0">
+                        <a href="#" data-toggle="tab" aria-expanded="false">知识产权</a>
                     </li>
-                    <li class="fr " data-id="0">
-                        <a href="javascript:void(0);" data-toggle="tab" aria-expanded="false">知识产权</a>
+                    <li class="fr " data-id="1">
+                        <a href="#" data-toggle="tab" aria-expanded="true">公司资质</a>
                     </li>
+
                 </ul>
 
             </div>
@@ -83,7 +84,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <label for="message-text" class="control-label">&nbsp;</label>
-                        <button type="button" class="js_upload_image btn default form-control" data-id="js_modal_banner">上传</button>
+                        <button type="button" class="js_upload_image btn default form-control" data-id="js_upload_image">上传</button>
                     </div>
                 </div>
             </div>
@@ -93,6 +94,26 @@
         <div class="modal-footer">
             <button type="button" class="btn default js_cancel" data-dismiss="modal">取消</button>
             <button type="button" class="btn blue js_submit">提交</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-dialog modal fade modal-scroll" id="uploadAppProgressModal" tabindex="-1"  >
+    <div class="modal-content">
+        <div class="modal-header">
+            <!--            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>-->
+            <h4 class="modal-title" data-new="" data-edit="">上传中</h4>
+        </div>
+        <div class="modal-body ">
+            <div class="form-group">
+                <div class=" js_progress_section">
+                    <p class="size">当前进度</p>
+                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

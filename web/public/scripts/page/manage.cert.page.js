@@ -4,61 +4,15 @@
 $(document).ready(function(){
     var init = {
         modal: $('#editOrAddModal'),
+        pagerObj: '',
         listContainer: $('.js_table_list'),
+        uploadImageBtn: '.js_upload_image',
 
+        imgPreview : $('.js_modal_pic_preview'),
         inputName : $('#js_modal_name'),
+        inputPic : $('#js_modal_pic'),
 
-        paramsAddBtn : $('.js_modal_params_add_btn'),
-        paramsSection : $('.js_modal_params'),
-        paramsCloneNode : $('.jmp_node .js_modal_param',$('.js_modal_params')),
-        paramsSectionList : $('.jmp_list',$('.js_modal_params')),
-
-
-        /**
-         * 初始化 基本参数事件
-         */
-        initModalParamsEvent : function () {
-            init.paramsAddBtn.unbind().bind('click',function () {
-                var node = init.paramsCloneNode.clone();
-                init.paramsSectionList.append(node);
-            });
-            $(document).on('click','.jmp_delete',function () {
-                $(this).parents('.js_modal_param').remove();
-            });
-        },
-        getModalParamsData : function () {
-            var objs = $('.js_modal_param',init.paramsSectionList);
-            var len = objs.length;
-            var res  = [];
-            if(len)
-            {
-                objs.each(function (key) {
-                    var tmpObj = $(this).find('input');
-                    var params = {
-                      id:  $.trim(tmpObj.eq(0).val()),
-                      name:  $.trim(tmpObj.eq(1).val()),
-                      sort_num:  key+1
-                    };
-                    res.push(params);
-                });
-            }
-            return res;
-        },
-        setModalParamsData : function (data) {
-            if(data)
-            {
-                data.forEach(function (value) {
-                    var node = init.paramsCloneNode.clone();
-                    var tmpObj = $(node).find('input');
-                    tmpObj.eq(0).val(value.id);
-                    tmpObj.eq(1).val(value.name);
-                    init.paramsSectionList.append(node);
-                });
-            }
-        },
-        clearModalParamsData : function () {
-            init.paramsSectionList.html('');
-        },
+        typeParams : '',
 
 
         /**
@@ -68,9 +22,13 @@ $(document).ready(function(){
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('edit'));
             init.inputName.val(data.name);
-            if(data.params){
-                init.setModalParamsData(data.params);
+            init.inputPic.val(data.pic);
+            var img = '';
+            if(data.pic){
+                img = document.global_config_data.img_host + data.pic;
             }
+            init.imgPreview.attr('src',img).removeClass('gone');
+
         },
         /**
          *清空表单
@@ -79,9 +37,48 @@ $(document).ready(function(){
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('new'));
             init.inputName.val('');
-            init.clearModalParamsData();
+            init.inputPic.val('');
+            init.imgPreview.addClass('gone').attr('src','');
         },
 
+        initTabEvent : function () {
+          $('.nav-tabs li').unbind().bind('click',function () {
+              init.typeParams = $(this).data('id');
+              setTimeout(function () {
+                  init.pagerObj.updateList(0);
+              },500)
+          });
+        },
+
+        /**
+         * 详情pager
+         */
+        initPager : function () {
+            init.pagerObj = $('#wrapperPageList').Pager({
+                protocol:'/manage/get-cert-list-ajax',
+                listSize:20,
+                onPageInitialized:function(){
+                    if (init.pagerObj){
+                        var top=$(window).scrollTop();
+                        if(top>100){
+                            $(window).scrollTop(0);
+                        }
+                    }
+                },
+                wrapUpdateData:function(idx,data){
+                    var params = {
+                        type:$('.nav-tabs li.active').data('id'),
+                    };
+
+                    if (params){
+                        $.extend(data, params);
+                    }
+                    return data;
+                }
+            });
+
+            init.pagerObj.updateList(0);
+        },
 
         /**
          * 初始化按钮时间
@@ -106,11 +103,12 @@ $(document).ready(function(){
                     var params = {
                         id:id,
                         name:$.trim(init.inputName.val()),
-                        params:init.getModalParamsData()
+                        pic:$.trim(init.inputPic.val()),
+                        type:$('.nav-tabs li.active').data('id'),
                     };
                     var checkMap = {
-                        name:'请输入事件名称',
-                        params:'请添加事件内容',
+                        name:'请输入描述',
+                        pic:'请上传图片',
                     };
 
                     for (var key in checkMap){
@@ -119,7 +117,7 @@ $(document).ready(function(){
                             return false;
                         }
                     }
-                    $.wpost('/manage/update-route-ajax',params,function(res){
+                    $.wpost('/manage/update-cert-ajax',params,function(res){
                         if(!params.id){
                             init.listContainer.append(res)
                         }else{
@@ -139,7 +137,7 @@ $(document).ready(function(){
                 var $parent=$this.parents('tr');
                 var id=$parent.attr('data-id');
                 $.confirm({content:'确认删除吗',success:function(){
-                    $.wpost('/manage/delete-route-ajax',{id:id},function(){
+                    $.wpost('/manage/delete-cert-ajax',{id:id},function(){
                         $.showToast('删除成功',true);
                         $this.parents('tr').remove();
                     });
@@ -196,14 +194,39 @@ $(document).ready(function(){
                     $.showToast('无可排序的数据',false);
                     return false;
                 }
-                $.wpost('/manage/save-route-sort-ajax',{params:params},function(){
+                $.wpost('/manage/save-cert-sort-ajax',{params:params},function(){
                     $.showToast('保存成功',true);
                 });
             });
 
+            /**
+             * 上传文件
+             */
+
+            $(init.uploadImageBtn).unbind().bind('click',function(){
+                var $this = $(this);
+                var modal = $(init.uploadProgressModal);
+                $(this).uploadImage('/upload/upload-image',{request_type:'ajax'},function (data) {
+                    var id = $this.data('id');
+                    if(data.res){
+                        init.inputPic.val(data.path);
+                        init.imgPreview.attr('src',data.url).removeClass('gone');
+                    }
+
+                    modal.modal('hide');
+                    $('.progress-bar',modal).css('width',0);
+                },function (percent) {
+                    modal.modal({backdrop:'static',keyboard:false});
+                    $('.progress-bar',modal).css('width',percent+'%');
+
+                });
+
+            });
+
         },
         run : function () {
-            init.initModalParamsEvent();
+            init.initPager();
+            init.initTabEvent();
             init.initBtnEvent();
         }
     };

@@ -45,17 +45,13 @@ class CertsModel extends Halo_Model
                 $data[$k]=$params[$v];
             }
         }
-        $data['parent_id'] = 0;
         if($this->timestamps){
             $data['created_at'] = $timeStr;
             $data['updated_at'] = $timeStr;
         }
 
         $result = $this->web->insertTable($this->tbl_name,$data);
-        if($result && !empty($params['params']))
-        {
-            $this->updateParams($result,$params['params']);
-        }
+
         return $result;
     }
 
@@ -102,12 +98,15 @@ class CertsModel extends Halo_Model
     }
 
     /**
-     * 获取 列表
+     * 列表
+     * @param $type
+     * @param int $offset
+     * @param int $length
      * @return array
      */
-    public function getList()
+    public function getList($type,$offset = 0,$length = 20)
     {
-        $result = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('parent_id=0  ORDER BY sort_num ASC'));
+        $result = $this->web_slave->getResultsByCondition($this->tbl_name,HaloPdo::condition('type=?  ORDER BY sort_num ASC',$type));
         $total = $this->web_slave->getCountByCondition($this->tbl_name,HaloPdo::condition('id>0'));
         $data = [
             'list'=>$result ? $result : [],

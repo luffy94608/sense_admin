@@ -24,6 +24,7 @@ class SideMenuBuilder
                     array('href'=>'/manage/menu','title'=>'导航栏'),
                     array('href'=>'/manage/map','title'=>'网站地图'),
                     array('href'=>'/manage/solution','title'=>'解决方案'),
+                    array('href'=>'/manage/cloud','title'=>'资源云授权'),
                     array('href'=>'/manage/route','title'=>'成长历程'),
                     array('href'=>'/manage/cert','title'=>'资质和产权'),
                     array('href'=>'/manage/solution','title'=>'解决方案'),

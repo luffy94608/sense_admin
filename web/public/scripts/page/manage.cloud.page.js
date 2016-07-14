@@ -10,10 +10,85 @@ $(document).ready(function(){
 
         imgPreview : $('.js_modal_pic_preview'),
         inputName : $('#js_modal_name'),
-        inputPic : $('#js_modal_pic'),
+        inputDownload : $('#js_modal_download'),
 
-        typeParams : '',
+        paramsAddBtn : $('.js_modal_params_add_btn'),
+        paramsSection : $('.js_modal_params'),
+        paramsCloneNode : $('.jmp_node .js_modal_param',$('.js_modal_params')),
+        paramsSectionList : $('.jmp_list',$('.js_modal_params')),
 
+
+        /**
+         * 初始化 select 2
+         */
+        initSelectBtn : function () {
+            init.inputDownload.select2({
+                placeholder: "选择sdk下载文件",
+                allowClear: true
+            });
+        },
+        /**
+         * 类型选择事件
+         */
+        initTypeChangeEvent:function (type) {
+            var obj = $('#radio_type_'+type);
+            var hrefId= obj.data('id');
+            obj.prop('checked',true);
+            $('.js_type_section').addClass('gone');
+            $(hrefId).removeClass('gone')
+
+        },
+
+        /**
+         * 初始化 基本参数事件
+         */
+        initModalParamsEvent : function () {
+            init.paramsAddBtn.unbind().bind('click',function () {
+                var node = init.paramsCloneNode.clone();
+                init.paramsSectionList.append(node);
+            });
+            $(document).on('click','.jmp_delete',function () {
+                $(this).parents('.js_modal_param').remove();
+            });
+        },
+        getModalParamsData : function () {
+            var objs = $('.js_modal_param',init.paramsSectionList);
+            var len = objs.length;
+            var res  = [];
+            if(len)
+            {
+                objs.each(function (key) {
+                    var tmpObj = $(this).find('input');
+                    var tmpTextAreObj = $(this).find('textarea');
+                    var params = {
+                        id:  $.trim(tmpObj.eq(0).val()),
+                        name:  $.trim(tmpObj.eq(1).val()),
+                        content:  $.trim(tmpTextAreObj.val()),
+                        sort_num:  key+1
+                    };
+                    if(params.name.length && params.content.length){
+                        res.push(params);
+                    }
+                });
+            }
+            return res;
+        },
+        setModalParamsData : function (data) {
+            if(data)
+            {
+                data.forEach(function (value) {
+                    var node = init.paramsCloneNode.clone();
+                    var tmpObj = $(node).find('input');
+                    tmpObj.eq(0).val(value.id);
+                    tmpObj.eq(1).val(value.name);
+                    $(node).find('textarea').val(value.content);
+                    init.paramsSectionList.append(node);
+                });
+            }
+        },
+        clearModalParamsData : function () {
+            init.paramsSectionList.html('');
+        },
 
         /**
          *初始化表单
@@ -22,13 +97,12 @@ $(document).ready(function(){
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('edit'));
             init.inputName.val(data.name);
-            init.inputPic.val(data.pic);
-            var img = '';
-            if(data.pic){
-                img = document.global_config_data.img_host + data.pic;
-            }
-            init.imgPreview.attr('src',img).removeClass('gone');
+            init.initTypeChangeEvent(data.type)
 
+            init.inputDownload.select2('val',data.download_ids.split(','));
+            if(data.params){
+                init.setModalParamsData(data.params);
+            }
         },
         /**
          *清空表单
@@ -36,16 +110,10 @@ $(document).ready(function(){
         clearModalFormData : function () {
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('new'));
-            init.inputName.val('');
-            init.inputPic.val('');
-            init.imgPreview.addClass('gone').attr('src','');
-        },
 
-        initTabEvent : function () {
-          $('.nav-tabs li').unbind().bind('click',function () {
-              init.typeParams = $(this).data('id');
-              init.pagerObj.updateList(0);
-          });
+            init.inputDownload.select2('val','');
+            init.clearModalParamsData();
+            init.initTypeChangeEvent(0)
         },
 
         /**
@@ -53,7 +121,7 @@ $(document).ready(function(){
          */
         initPager : function () {
             init.pagerObj = $('#wrapperPageList').Pager({
-                protocol:'/manage/get-cert-list-ajax',
+                protocol:'/manage/get-cloud-list-ajax',
                 listSize:20,
                 onPageInitialized:function(){
                     if (init.pagerObj){
@@ -64,15 +132,8 @@ $(document).ready(function(){
                     }
                 },
                 wrapUpdateData:function(idx,data){
-                    var type = $('.nav-tabs li.active').data('id');
-                    if(init.typeParams.toString().length){
-                        type = init.typeParams;
-                    }
                     var params = {
-                        type:type,
                     };
-
-
                     if (params){
                         $.extend(data, params);
                     }
@@ -106,21 +167,31 @@ $(document).ready(function(){
                     var params = {
                         id:id,
                         name:$.trim(init.inputName.val()),
-                        pic:$.trim(init.inputPic.val()),
-                        type:$('.nav-tabs li.active').data('id'),
+                        download_ids:$.trim(init.inputDownload.select2('val')),
+                        params:init.getModalParamsData(),
+                        type:$('.js_radio_type:checked').val()
                     };
                     var checkMap = {
                         name:'请输入描述',
-                        pic:'请上传图片',
                     };
-
                     for (var key in checkMap){
                         if(!params[key] || params[key].length<1){
                             $.showToast(checkMap[key],false);
                             return false;
                         }
                     }
-                    $.wpost('/manage/update-cert-ajax',params,function(res){
+                    if(params.type == 1){
+                        if(!params.download_ids || params.download_ids.length<1){
+                            $.showToast('请选择下载文件',false);
+                            return false;
+                        }
+                    }else{
+                        if(!params.params || params.params.length<1){
+                            $.showToast('请添加列表内容',false);
+                            return false;
+                        }
+                    }
+                    $.wpost('/manage/update-cloud-ajax',params,function(res){
                         if(!params.id){
                             init.listContainer.append(res)
                         }else{
@@ -140,7 +211,7 @@ $(document).ready(function(){
                 var $parent=$this.parents('tr');
                 var id=$parent.attr('data-id');
                 $.confirm({content:'确认删除吗',success:function(){
-                    $.wpost('/manage/delete-cert-ajax',{id:id},function(){
+                    $.wpost('/manage/delete-cloud-ajax',{id:id},function(){
                         $.showToast('删除成功',true);
                         $this.parents('tr').remove();
                     });
@@ -197,39 +268,21 @@ $(document).ready(function(){
                     $.showToast('无可排序的数据',false);
                     return false;
                 }
-                $.wpost('/manage/save-cert-sort-ajax',{params:params},function(){
+                $.wpost('/manage/save-cloud-sort-ajax',{params:params},function(){
                     $.showToast('保存成功',true);
                 });
             });
 
-            /**
-             * 上传文件
-             */
-
-            $(init.uploadImageBtn).unbind().bind('click',function(){
-                var $this = $(this);
-                var modal = $(init.uploadProgressModal);
-                $(this).uploadImage('/upload/upload-image',{request_type:'ajax'},function (data) {
-                    var id = $this.data('id');
-                    if(data.res){
-                        init.inputPic.val(data.path);
-                        init.imgPreview.attr('src',data.url).removeClass('gone');
-                    }
-
-                    modal.modal('hide');
-                    $('.progress-bar',modal).css('width',0);
-                },function (percent) {
-                    modal.modal({backdrop:'static',keyboard:false});
-                    $('.progress-bar',modal).css('width',percent+'%');
-
-                });
-
+            
+            $('.js_radio_type').unbind().bind('click',function () {
+                init.initTypeChangeEvent($(this).val())
             });
 
         },
         run : function () {
+            init.initSelectBtn();
+            init.initModalParamsEvent();
             init.initPager();
-            init.initTabEvent();
             init.initBtnEvent();
         }
     };

@@ -505,6 +505,114 @@ class ManageController extends BaseController
         $this->inputResult();
     }
 
+    public function cloudAction()
+    {
+        $this->view->page='manage-cloud-page';
+        $model = new DownloadModel();
+        $options = $model->getDownloadOptions();
+        $this->view->options = $options;
+    }
+
+    public function getCloudListAjaxAction()
+    {
+        $params = $this->getPageParams();
+        $params['type'] = $this->getLegalParam('type','enum',[0,1],0);
+        $model=  new CloudModel();
+        $result = $model->getList();
+        $html  = ManageBuilder::toBuildCloudListHtml($result['list']);
+
+        $data = [
+            'total' =>intval($result['total']),
+            'html' =>$html,
+        ];
+        $this->inputResult($data);
+    }
+
+
+    /**
+     * 创建或者修改 知识和产权
+     */
+    public function updateCloudAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['name']=$this->getLegalParam('name','str');
+        $params['download_ids']=$this->getLegalParam('download_ids','str','','');
+        $params['params']=$this->getLegalParam('params','raw','',[]);
+        $params['type'] = $this->getLegalParam('type','enum',[0,1],0);
+
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $id = $this->getLegalParam('id','str');
+
+        $model=  new CloudModel();
+        if (empty($id))
+        {
+            $result = $model->create($params);
+            $params['id'] = $result;
+        }
+        else
+        {
+            $result = $model->update($id,$params);
+            $params['id'] = $id;
+        }
+
+        if($result>0)
+        {
+            $detail = $model->getDetail($params['id']);
+            $html = ManageBuilder::toBuildCloudItem($detail);
+            $this->inputResult($html);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 删除 知识和产权
+     */
+    public function deleteCloudAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['id']=$this->getLegalParam('id','str');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new CloudModel();
+        $result = $model->delete($params['id']);
+
+        if($result>0)
+        {
+            $this->inputResult($result);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 保存排序 知识和产权
+     */
+    public function saveCloudSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new CloudModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
 
     /**
      * 网站地图

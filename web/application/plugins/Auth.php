@@ -110,6 +110,8 @@ class AuthPlugin extends Yaf_Plugin_Abstract
         if($request_type=='ajax')
         {
             $refer = $_SERVER['HTTP_REFERER'];
+            //TODO 关闭域名判断逻辑
+            return true;
             if(!empty($refer))
             {
                 $legalHost = array(

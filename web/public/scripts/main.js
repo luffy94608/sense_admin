@@ -62,10 +62,12 @@
             'manage-cert-page': 'page/manage.cert.page',
             'manage-cloud-page': 'page/manage.cloud.page',
             'manage-solution-page': 'page/manage.solution.page',
+            'page-index-page': 'page/page.index.page',
             'lock-type-page': 'page/lock.type.page',
             'lock-download-page': 'page/lock.download.page',
             'lock-list-page': 'page/lock.list.page',
             'home-banner-page': 'page/home.banner.page',
+            'home-list-page': 'page/home.list.page',
             'home-partner-page': 'page/home.partner.page',
 
         },
@@ -124,10 +126,12 @@
             'manage-cloud-page':['base'],
             'manage-solution-page':['base'],
             'manage-news-page':['base','date-picker'],
+            'page-index-page':['base'],
             'lock-type-page':['base'],
             'lock-download-page':['base'],
             'lock-list-page':['base'],
             'home-banner-page':['base'],
+            'home-list-page':['base'],
             'home-partner-page':['base'],
 
         }

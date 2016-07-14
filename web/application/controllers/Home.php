@@ -173,4 +173,103 @@ class HomeController extends BaseController
         }
     }
 
+
+    /**
+     * list 管理
+     */
+    public function listAction()
+    {
+        $this->view->page='home-list-page';
+        $model = new PageModel();
+        $list = $model->getPageContentList();
+        $html = HomeBuilder::toBuildListHtml($list['list']);
+        $this->view->html = $html;
+    }
+
+    /**
+     * 创建或者修改
+     */
+    public function updateListAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['title']=$this->getLegalParam('title','str');
+        $params['content']=$this->getLegalParam('content','str');
+        $params['sub_title']=$this->getLegalParam('sub_title','str');
+        $params['pic']=$this->getLegalParam('pic','str');
+        $params['icon']=$this->getLegalParam('icon','str');
+        $params['icon_active']=$this->getLegalParam('icon_active','str');
+        $params['position']=$this->getLegalParam('position','str');
+        $params['links']=$this->getLegalParam('links','raw','',[]);
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $id = $this->getLegalParam('id','str');
+        $model = new PageModel();
+        if (empty($id))
+        {
+            $result = $model->createPageContentInfo($params);
+            $params['id'] = $result;
+        }
+        else
+        {
+            $result = $model->updatePageContentInfo($id,$params);
+            $params['id'] = $id;
+        }
+
+        if($result>0)
+        {
+            $detail = $model->getPageContentDetail($params['id']);
+            $html = HomeBuilder::toBuildItemHtml($detail);
+            $this->inputResult($html);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 删除
+     */
+    public function deleteListAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['id']=$this->getLegalParam('id','str');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model = new PageModel();
+        $result = $model->deletePageContent($params['id']);
+
+        if($result>0)
+        {
+            $this->inputResult($result);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 保存排序
+     */
+    public function saveListSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new PageModel();
+        $model->saveContentSort($params['params']);
+        $this->inputResult();
+    }
+
 }

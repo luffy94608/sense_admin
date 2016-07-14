@@ -1,0 +1,208 @@
+<div class="page-content">
+    <div class="portlet box black">
+        <div class="portlet-title">
+            <div class="caption">
+                首页列表
+            </div>
+            <div class="tools">
+
+            </div>
+            <div class="actions">
+                <a href="javascript:;" class="btn btn-default btn-sm js_edit js_new_btn ">
+                    <i class="fa fa-plus"></i>
+                    添加
+                </a>
+                <a href="javascript:;" class="btn btn-default btn-sm js_sort_save">
+                    <i class="fa fa-save"></i> 保存排序
+                </a>
+            </div>
+        </div>
+
+        <div class="portlet-body" id="wrapperPageList">
+
+            <div class="table-scrollable" >
+                <table class="table table-striped table-bordered table-hover table-middle" align="center">
+                    <thead>
+                    <tr>
+                        <th class="min-width-100">图片</th>
+                        <th class="min-width-100">标题</th>
+                        <th class="min-width-100">描述</th>
+                        <th >排序</th>
+                        <th >操作</th>
+                    </tr>
+                    </thead>
+                    <tbody class="js_table_list" id="list">
+                    <?php echo $this->html;?>
+                    </tbody>
+                </table>
+            </div>
+            <div id='list_count' class="gone"></div>
+            <?php echo BaseBuilder::createPageIndicator();?>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-dialog modal fade modal-scroll" id="editOrAddModal" tabindex="-1"  data-width="80%">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title" data-new="添加" data-edit="编辑"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group ">
+                        <label class="control-label">标题</label>
+                        <input type="text" class="form-control js_modal_title" placeholder="">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group ">
+                        <label class="control-label">图文位置</label>
+                        <select class="form-control js_modal_position" >
+                            <option value="0">图片居右</option>
+                            <option value="1">图片居左</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group ">
+                        <label class="control-label">图片</label>
+                        <input type="hidden"  class="form-control js_modal_img" data-preview=".js_modal_img_preview">
+                        <img class="js_modal_img_preview img-preview gone margin-top-20" style="max-height: 50px;display:block" src="" >
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group ">
+                        <label class="control-label">&nbsp;</label>
+                        <button type="button" class="js_upload_image btn  form-control" data-id=".js_modal_img" >上传图片</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group ">
+                        <label class="control-label">icon 图标</label>
+                        <input type="hidden" class="form-control js_modal_icon" data-preview=".js_modal_icon_preview">
+                        <img class="js_modal_icon_preview img-preview gone margin-top-20" style="max-height: 50px;display:block" src="" >
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group ">
+                        <label class="control-label">&nbsp;</label>
+                        <button type="button" class="js_upload_image btn  form-control" data-id=".js_modal_icon" >上传图片</button>
+
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group ">
+                        <label class="control-label">icon 选中状态图标</label>
+                        <input type="hidden"  class="form-control js_modal_icon_active" data-preview=".js_modal_icon_active_preview">
+                        <img class="js_modal_icon_active_preview img-preview gone margin-top-20" style="max-height: 50px;display:block" src="" >
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group ">
+                        <label class="control-label">&nbsp;</label>
+                        <button type="button" class="js_upload_image btn  form-control" data-id=".js_modal_icon_active" >上传图片</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group ">
+                        <label class="control-label">描述</label>
+                        <input type="text"  class="form-control js_modal_sub_title" placeholder="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group ">
+                        <label class="control-label">内容</label>
+                        <textarea class="form-control js_modal_content" placeholder="内容" rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="control-label">
+                        链接
+                        <button type="button" class="btn default btn-sm js_modal_params_add_btn min-width-80 margin-left-25">添加</button>
+                    </label>
+                    <div class="js_modal_params">
+                        <div class="gone jmp_node">
+                            <div class="js_modal_param">
+                                <div class="col-md-4 gone">
+                                    <div class="form-group ">
+                                        <input type="hidden" class="form-control" placeholder="id" >
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group ">
+                                        <input type="text" class="form-control " placeholder="链接名称" >
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <input type="text" class="form-control " placeholder="链接地址" >
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <a href="javascript:;" class="btn default green js_up">
+                                            <i class="fa fa-arrow-up"></i>
+                                        </a>
+                                        <a href="javascript:;" class="btn default  js_down">
+                                            <i class="fa fa-arrow-down"></i>
+                                        </a>
+                                        <button type="button" class="btn red jmp_delete"><i class="icon-close"></i> 删除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="jmp_list">
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn default js_cancel" data-dismiss="modal">取消</button>
+            <button type="button" class="btn blue js_submit">提交</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-dialog modal fade modal-scroll" id="uploadAppProgressModal" tabindex="-1"  >
+    <div class="modal-content">
+        <div class="modal-header">
+            <!--            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>-->
+            <h4 class="modal-title" data-new="" data-edit="">上传中</h4>
+        </div>
+        <div class="modal-body ">
+            <div class="form-group">
+                <div class=" js_progress_section">
+                    <p class="size">当前进度</p>
+                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -54,7 +54,7 @@ class SideMenuBuilder
                 'title'=>'单页管理',
                 'icon'=>'  icon-doc',
                 'children'=>array(
-                    array('href'=>'/order/list','title'=>'单页列表'),
+                    array('href'=>'/page/index','title'=>'单页列表'),
                 )),
             array(
                 'module'=>'account',

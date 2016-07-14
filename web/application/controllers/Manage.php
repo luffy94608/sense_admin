@@ -12,23 +12,15 @@ class ManageController extends BaseController
 {
 
     /**
-     * @var BaseModel
+     * @var SolutionModel
      */
     public $solutionModel;
 
     public function init()
     {
         parent::init();
-        $map = [
-            'name'=>'name',
-            'title'=>'title',
-            'banner'=>'banner',
-            'pic'=>'pic',
-            'demand'=>'demand',
-            'plan'=>'plan',
-            'advantage'=>'advantage',
-        ];
-        $this->solutionModel=  new BaseModel('solutions',$map);
+
+        $this->solutionModel=  new SolutionModel();
     }
 
     /**
@@ -230,6 +222,22 @@ class ManageController extends BaseController
         $this->view->html = $html;
     }
 
+    /**
+     * 保存排序 知识和产权
+     */
+    public function saveSolutionSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  $this->solutionModel;
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
+
 
     /**
      * 创建或者修改
@@ -241,7 +249,6 @@ class ManageController extends BaseController
 
         $params['name']=$this->getLegalParam('name','str');
         $params['title']=$this->getLegalParam('title','str');
-        $params['banner']=$this->getLegalParam('banner','str');
         $params['pic']=$this->getLegalParam('pic','str');
         $params['demand']=$this->getLegalParam('demand','str');
         $params['plan']=$this->getLegalParam('plan','str');

@@ -29,18 +29,18 @@ $(document).ready(function(){
             modalTitle.html(modalTitle.data('edit'));
             var host = document.global_config_data.img_host;
             var banner,pic;
-            if(data.banner){
-                banner =  host + data.banner;
-            }
+            // if(data.banner){
+            //     banner =  host + data.banner;
+            // }
             if(data.pic){
                 pic = host + data.pic;
             }
-            init.bannerPreview.attr('src',banner).removeClass('gone');
+            // init.bannerPreview.attr('src',banner).removeClass('gone');
             init.picPreview.attr('src',pic).removeClass('gone');
 
             init.inputName.val(data.name);
             init.inputTitle.val(data.title);
-            init.inputBanner.val(data.banner);
+            // init.inputBanner.val(data.banner);
             init.inputPic.val(data.pic);
             init.inputDemand.val(data.demand);
             init.inputPlan.val(data.plan);
@@ -57,7 +57,7 @@ $(document).ready(function(){
 
             init.inputName.val('');
             init.inputTitle.val('');
-            init.inputBanner.val('');
+            // init.inputBanner.val('');
             init.inputPic.val('');
             init.inputDemand.val('');
             init.inputPlan.val('');
@@ -90,7 +90,7 @@ $(document).ready(function(){
                         id:id,
                         name:$.trim(init.inputName.val()),
                         title:$.trim(init.inputTitle.val()),
-                        banner:$.trim(init.inputBanner.val()),
+                        // banner:$.trim(init.inputBanner.val()),
                         pic:$.trim(init.inputPic.val()),
                         demand:$.trim(init.inputDemand.val()),
                         plan:$.trim(init.inputPlan.val()),
@@ -100,7 +100,7 @@ $(document).ready(function(){
                     var checkMap = {
                         name:'方案名称',
                         title:'简述',
-                        banner:'banner',
+                        // banner:'banner',
                         pic:'缩略图',
                         demand:'背景和需求',
                         plan:'解决方案',
@@ -163,6 +163,64 @@ $(document).ready(function(){
                 });
 
             });
+
+            /**
+             * 上升 下降
+             */
+            $(document).on('click','.js_up,.js_down',function () {
+                var $this=$(this);
+                var $parent=$($this.parents('.js_modal_param')[0]);
+                if($parent.length == 0){
+                    $parent=$($this.parents('tr'));
+                }
+                var target;
+
+                if($this.hasClass('js_up')){
+                    target = $parent.prev()[0];
+                }else{
+                    target = $parent.next()[0];
+                }
+                if(!target){
+                    return false;
+                }
+                target = $(target);
+                var bakTarget = target.clone();
+                var bakCurrent =  $parent.clone();
+
+                target.replaceWith(bakCurrent);
+                $parent.replaceWith(bakTarget);
+            });
+
+
+            /**
+             * 保存排序
+             */
+            $(document).on('click','.js_sort_save',function () {
+                var trNodes = $('.js_table_list tr');
+
+                var params = [];
+                for (var i=0;i<trNodes.length;i++){
+                    var tmpNode = $(trNodes[i]);
+                    var tmpId = tmpNode.data('id');
+                    if(tmpId)
+                    {
+                        var tmpData = {
+                            id:tmpId,
+                            sort_num:i+1,
+                        };
+                        params.push(tmpData);
+                    }
+
+                }
+                if(params.length<1){
+                    $.showToast('无可排序的数据',false);
+                    return false;
+                }
+                $.wpost('/manage/save-solution-sort-ajax',{params:params},function(){
+                    $.showToast('保存成功',true);
+                });
+            });
+
 
 
         },

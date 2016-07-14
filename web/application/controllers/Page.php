@@ -30,13 +30,24 @@ class PageController extends BaseController
         $html = PageBuilder::toBuildPageListHtml($list['list']);
         $this->view->html = $html;
 
+        //页面类型
         $types = $this->model->getPageTypes();
         $this->view->types = $types;
 
+        //下载列表
         $model = new DownloadModel();
         $options = $model->getDownloadOptions();
         $this->view->options = $options;
 
+        //加密锁列表
+        $lockModel  = new LockModel();
+        $lockTypes = $lockModel->getTypeList();
+        $this->view->lockTypes = $lockTypes['list'];
+
+        //解决方案列表
+        $solutionModel  =  new SolutionModel();
+        $solutions = $solutionModel->getList();
+        $this->view->solutions = $solutions['list'];
     }
 
     /**

@@ -27,7 +27,6 @@ class SideMenuBuilder
                     array('href'=>'/manage/cloud','title'=>'资源云授权'),
                     array('href'=>'/manage/route','title'=>'成长历程'),
                     array('href'=>'/manage/cert','title'=>'资质和产权'),
-                    array('href'=>'/manage/solution','title'=>'解决方案'),
                     array('href'=>'/manage/recruit','title'=>'招聘配置'),
                     array('href'=>'/manage/news','title'=>'新闻配置'),
                 )),

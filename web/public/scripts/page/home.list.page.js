@@ -44,10 +44,12 @@ $(document).ready(function(){
             {
                 objs.each(function (key) {
                     var tmpObj = $(this).find('input');
+                    var tmpSelectObj = $(this).find('select');
                     var params = {
                         id:  $.trim(tmpObj.eq(0).val()),
                         name:  $.trim(tmpObj.eq(1).val()),
                         url:  $.trim(tmpObj.eq(2).val()),
+                        target:  $.trim(tmpSelectObj.val()),
                         sort_num:  key+1
                     };
                     if(params.name.length){
@@ -63,9 +65,11 @@ $(document).ready(function(){
                 data.forEach(function (value) {
                     var node = init.paramsCloneNode.clone();
                     var tmpObj = $(node).find('input');
+                    var tmpSelectObj = $(node).find('select');
                     tmpObj.eq(0).val(value.id);
                     tmpObj.eq(1).val(value.name);
                     tmpObj.eq(2).val(value.url);
+                    tmpSelectObj.val(value.target);
                     init.paramsSectionList.append(node);
                 });
             }

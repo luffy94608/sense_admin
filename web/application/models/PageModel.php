@@ -49,6 +49,7 @@ class PageModel extends Halo_Model
     public $keyLinkMap = array(
         'name'=>'name',
         'url'=>'url',
+        'target'=>'target',
         'page_content_id'=>'page_content_id',
         'sort_num'=>'sort_num',
     );

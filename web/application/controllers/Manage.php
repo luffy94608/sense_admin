@@ -628,6 +628,24 @@ class ManageController extends BaseController
     {
         $this->view->page='manage-map-page';
     }
+
+    /**
+     * 网站地图
+     */
+    public function menuAction()
+    {
+        $this->view->page='manage-menu-page';
+
+        $model = new PageModel();
+        $pages = $model->getPageList();
+        $this->view->pageOptions = $pages['list'];
+        
+    }
+
+    public function updateMenuAjaxAction()
+    {
+
+    }
     
 
 }

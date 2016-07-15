@@ -12,47 +12,18 @@ class MenuModel extends Halo_Model
 
     private $web;
     private $web_slave;
-    public $tbl_page_name = 'pages';
-    public $tbl_type_name = 'page_types';
-    public $tbl_link_name = 'page_links';
-    public $tbl_content_name = 'page_contents';
+    public $tbl_name = 'menus';
 
-//    public $keyTypeMap = array(
-//        'name'=>'name',
-//        'title'=>'title',
-//        'img'=>'img',
-//        'content'=>'content',
-//    );
-
-    public $keyPageMap = array(
-        'name'=>'name',
-        'title'=>'title',
-        'keywords'=>'keywords',
-        'description'=>'description',
-        'banner'=>'banner',
-        'extra'=>'extra',
-        'page_type_id'=>'page_type_id',
-    );
-
-    public $keyContentMap = array(
-        'page_id'=>'page_id',
-        'title'=>'title',
-        'sub_title'=>'sub_title',
-        'content'=>'content',
-        'pic'=>'pic',
-        'icon'=>'icon',
-        'icon_active'=>'icon_active',
-        'sort_num'=>'sort_num',
-    );
-
-    public $keyLinkMap = array(
+    public $keyMap = array(
         'name'=>'name',
         'url'=>'url',
-        'page_content_id'=>'page_content_id',
+        'page_id'=>'page_id',
+        'type'=>'type',
+        'status'=>'status',
+        'parent_id'=>'parent_id',
+        'target'=>'target',
         'sort_num'=>'sort_num',
     );
-
-
 
     public function __construct()
     {
@@ -66,11 +37,10 @@ class MenuModel extends Halo_Model
      * @param $params
      * @return bool|int
      */
-    public function createPage($params)
+    public function createMenu($params)
     {
-        $timeStr = date('Y-m-d H:i:s');
         $data = [];
-        $maps  = $this->keyPageMap;
+        $maps  = $this->keyMap;
         foreach($maps as $k=>$v)
         {
             if(array_key_exists($v,$params) && $v!==false)
@@ -78,14 +48,9 @@ class MenuModel extends Halo_Model
                 $data[$k]=$params[$v];
             }
         }
-        $data['created_at'] = $timeStr;
-        $data['updated_at'] = $timeStr;
 
-        $result = $this->web->insertTable($this->tbl_page_name,$data);
-        if($result && empty($params))
-        {
-            $this->updatePageContents($result,$params);
-        }
+        $result = $this->web->insertTable($this->tbl_name,$data);
+
 
         return $result;
     }
@@ -100,7 +65,7 @@ class MenuModel extends Halo_Model
     {
         if(!empty($params))
         {
-            $map=$this->keyPageMap;
+            $map=$this->keyMap;
             $data=array();
             foreach($params as $k=>$v)
             {
@@ -112,10 +77,9 @@ class MenuModel extends Halo_Model
 
             $data['updated_at'] = date('Y-m-d H:i:s');
 
-            $this->web->updateTable($this->tbl_page_name,$data,HaloPdo::condition('id = ?',$id));
+            $this->web->updateTable($this->tbl_name,$data,HaloPdo::condition('id = ?',$id));
             if($id && empty($params))
             {
-                $this->updatePageContents($id,$params);
             }
             return false;
         }
@@ -128,23 +92,8 @@ class MenuModel extends Halo_Model
      */
     public function deletePage($id)
     {
-        $result =  $this->web->delRowByCondition2($this->tbl_page_name,HaloPdo::condition('id = ?',$id));
-        if($result)
-        {
-            $contents  = $this->web_slave->getResultsByCondition($this->tbl_content_name,HaloPdo::condition('page_id',$id));
-            if($contents)
-            {
-                $delIds= [];
-                foreach ($contents as $content)
-                {
-                    $delIds[]= $content['id'];
-                }
+        $result =  $this->web->delRowByCondition2($this->tbl_name,HaloPdo::condition('id = ?',$id));
 
-                $this->db->delRowByCondition2($this->tbl_content_name,HaloPdo::condition('page_id',$id));
-                $this->db->delRowByCondition2($this->tbl_link_name,sprintf('page_content_id IN (%s)',implode(',',$delIds)));
-
-            }
-        }
         return $result;
     }
 
@@ -154,8 +103,8 @@ class MenuModel extends Halo_Model
      */
     public function getPageList()
     {
-        $result = $this->web_slave->getResultsByCondition($this->tbl_page_name,sprintf('id>0  ORDER BY updated_at DESC'));
-        $total = $this->web_slave->getCountByCondition($this->tbl_page_name,HaloPdo::condition('id>0'));
+        $result = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('id>0  ORDER BY updated_at DESC'));
+        $total = $this->web_slave->getCountByCondition($this->tbl_name,HaloPdo::condition('id>0'));
         $data = [
           'list'=>$result ? $result : [],
           'total'=>intval($total),
@@ -170,7 +119,7 @@ class MenuModel extends Halo_Model
      */
     public function getPageDetail($id)
     {
-        $result = $this->web_slave->getRowByCondition($this->tbl_page_name,HaloPdo::condition('id= ?',$id));
+        $result = $this->web_slave->getRowByCondition($this->tbl_name,HaloPdo::condition('id= ?',$id));
         return $result;
     }
 
@@ -271,21 +220,6 @@ class MenuModel extends Halo_Model
     }
 
     /**
-     * 批量更新页面内容 type
-     * @param $pageId
-     * @param $params
-     * @return bool|int
-     */
-    public function updatePageContents($pageId,$params)
-    {
-        $relationKey = 'page_id';
-        $maps  = $this->keyContentMap;
-        $tbl_name = $this->tbl_content_name;
-        $this->updateCommonParams($tbl_name,$relationKey,$maps,$pageId,$params);
-
-    }
-
-    /**
      * 批量更新页面内容链接 type
      * @param $pageId
      * @param $params
@@ -293,9 +227,9 @@ class MenuModel extends Halo_Model
      */
     public function updatePageLinks($pageId,$params)
     {
-        $relationKey = 'page_content_id';
-        $maps  = $this->keyLinkMap;
-        $tbl_name = $this->tbl_link_name;
+        $relationKey = 'parent_id';
+        $maps  = $this->keyMap;
+        $tbl_name = $this->tbl_name;
         $this->updateCommonParams($tbl_name,$relationKey,$maps,$pageId,$params);
 
     }

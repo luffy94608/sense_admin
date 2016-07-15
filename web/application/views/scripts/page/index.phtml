@@ -12,7 +12,7 @@
                     <i class="fa fa-plus"></i>
                     添加
                 </a>
-               
+
             </div>
         </div>
 
@@ -23,7 +23,7 @@
                     <thead>
                     <tr>
                         <th class="min-width-100">banner</th>
-                        <th class="min-width-100">页面名称</th>
+                        <th class="min-width-100">单页名称</th>
                         <th >操作</th>
                     </tr>
                     </thead>
@@ -51,7 +51,7 @@
                     <div class="form-group">
                         <label for="message-text" class="control-label">banner</label>
                         <input type="hidden" class="form-control" id="js_modal_banner">
-                        <img class=" img-preview gone margin-top-20" id="js_modal_banner_preview" style="max-height: 50px;" src="" >
+                        <img class=" img-preview gone margin-top-20" id="js_modal_banner_preview" style="max-height: 50px;display: block" src="" >
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -75,6 +75,7 @@
                     <div class="form-group">
                         <label class="control-label">选择单页类型</label>
                         <select id="js_modal_type" class="form-control" >
+                            <option value="">请选择页面类型</option>
                             <?php
                             $types = $this->types;
                             $str = '';
@@ -94,7 +95,7 @@
                 </div>
             </div>
 
-            <div class="row " id="">
+            <div class="row js_show_type_section" id="js_show_type_download">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label>选择SDK下载文件</label>
@@ -130,7 +131,65 @@
                 </div>
             </div>
 
-            <div class="row " id="">
+            <div class="row js_show_type_section" id="js_show_type_lock">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>选择加密锁</label>
+                        <select id="js_modal_lock" class="form-control" >
+                            <?php
+                            $options = $this->lockTypes;
+                            $str = '';
+
+                            foreach ($options as $option)
+                            {
+                                $id= $option['id'];
+                                $name= $option['name'];
+                                $str.="
+                                    <option value={$id}>{$name}</option>
+                                    ";
+                            }
+                            echo $str;
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row js_show_type_section" id="js_show_type_solution">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>选择解决方案</label>
+                        <select id="js_modal_solution" class="form-control" >
+                            <?php
+                            $options = $this->solutions;
+                            $str = '';
+
+                            foreach ($options as $option)
+                            {
+                                $id= $option['id'];
+                                $name= $option['name'];
+                                $str.="
+                                    <option value={$id}>{$name}</option>
+                                    ";
+                            }
+                            echo $str;
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row js_show_type_section" id="js_show_type_head">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>描述</label>
+                        <textarea  id="js_modal_head" class="form-control" placeholder="描述或小标题" rows="4"></textarea>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row js_show_type_section" id="js_show_type_list">
                 <div class="col-md-12">
                     <label class="control-label">
                         列表内容
@@ -147,7 +206,7 @@
 
                                 <div class="col-md-9">
                                     <div class="form-group ">
-                                        <input type="text" class="form-control " placeholder="大标题" >
+                                        <input type="text" class="form-control " placeholder="标题" >
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -163,20 +222,33 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="text" class="form-control " placeholder="小标题" >
+                                        <input type="text" class="form-control " placeholder="描述" >
                                     </div>
                                 </div>
-                                <div class="col-md-9">
-                                    <div class="form-group ">
-                                        <label for="message-text" class="control-label">图片</label>
-                                        <input type="hidden" class="form-control js_modal_item_img">
-                                        <img class="js_modal_item_img_preview img-preview gone margin-top-20" style="max-height: 50px;" src="" >
+
+
+                                <div class="js_modal_item_img_section">
+                                    <div class="col-md-7">
+                                        <div class="form-group ">
+                                            <label for="message-text" class="control-label">图片</label>
+                                            <input type="hidden" class="form-control js_modal_item_img">
+                                            <img class="js_modal_item_img_preview img-preview gone margin-top-20" style="max-height: 50px;display: block" src="" >
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="message-text" class="control-label">&nbsp;</label>
-                                        <button type="button" class="js_upload_image btn  form-control" data-id=".js_modal_item_img" data-parent=".js_modal_param">上传图片</button>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="message-text" class="control-label">&nbsp;</label>
+                                            <button type="button" class="js_upload_image btn  form-control" data-id=".js_modal_item_img" data-parent=".js_modal_param">上传图片</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group ">
+                                            <label class="control-label">图文位置</label>
+                                            <select class="form-control js_modal_position" >
+                                                <option value="0">图片居右</option>
+                                                <option value="1">图片居左</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -184,6 +256,52 @@
 <!--                                        <label class="control-label">内容</label>-->
                                         <textarea  id="js_modal_desc" class="form-control" placeholder="内容" rows="4"></textarea>
                                     </div>
+                                </div>
+                                <div class="col-md-12 js_modal_params_sub_section">
+                                    <label class="control-label ">
+                                        链接
+                                        <button type="button" class="btn default btn-sm js_modal_params_sub_add_btn min-width-80 margin-left-25">添加链接</button>
+                                    </label>
+                                    <div class="js_modal_sub_params">
+                                        <div class="gone jmp_sub_node">
+                                            <div class="js_modal_sub_param">
+                                                <div class="col-md-4 gone">
+                                                    <div class="form-group ">
+                                                        <input type="hidden" class="form-control" placeholder="id" >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group ">
+                                                        <input type="text" class="form-control " placeholder="链接名称" >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group ">
+                                                        <input type="text" class="form-control " placeholder="链接地址" >
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <a href="javascript:;" class="btn default green js_sub_up">
+                                                            <i class="fa fa-arrow-up"></i>
+                                                        </a>
+                                                        <a href="javascript:;" class="btn default  js_sub_down">
+                                                            <i class="fa fa-arrow-down"></i>
+                                                        </a>
+                                                        <button type="button" class="btn red jmp_sub_delete"><i class="icon-close"></i> 删除</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="jmp_sub_list">
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <hr class="">
                                 </div>
                             </div>
                         </div>

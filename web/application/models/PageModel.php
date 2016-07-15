@@ -114,9 +114,9 @@ class PageModel extends Halo_Model
             $data['updated_at'] = date('Y-m-d H:i:s');
 
             $this->web->updateTable($this->tbl_page_name,$data,HaloPdo::condition('id = ?',$id));
-            if($id && !empty($params))
+            if($id && !empty($params['contents']))
             {
-                $this->updatePageContents($id,$params);
+                $this->updatePageContents($id,$params['contents']);
             }
             return true;
         }
@@ -224,7 +224,7 @@ class PageModel extends Halo_Model
             {
                 $tmpItem = [];
                 $tmpLinkItem = [];
-                $tmpId= $param['id'];
+                $tmpId= isset($param['id'])?$param['id']:'';
 
                 if($tmpId && !empty($param['links']))
                 {
@@ -264,6 +264,11 @@ class PageModel extends Halo_Model
                             }
                         }
                     }
+                    //更新link
+                    if($tbl_name == 'page_contents')
+                    {
+                        $this->updatePageLinks($tmpId,$paramsMap[$tmpId]);
+                    }
                     if(in_array(false,$updateStatusArr,true))
                     {
                         $tmpItem['id']= $tmpId;
@@ -281,16 +286,6 @@ class PageModel extends Halo_Model
             if(count($updateData))
             {
                 $batchUpdateStrArr = array_unique($batchUpdateStrArr);
-                if($tbl_name == 'page_contents')
-                {
-                    foreach ($updateData as $updateItem)
-                    {
-                        if($paramsMap[$updateItem['id']])
-                        {
-                            $this->updatePageLinks($updateItem['id'],$paramsMap[$updateItem['id']]);
-                        }
-                    }
-                }
                 $this->web->batchUpdateData($tbl_name,array_keys($updateData[0]),$updateData,implode(',',$batchUpdateStrArr));
             }
             if(count($insertData))
@@ -382,7 +377,7 @@ class PageModel extends Halo_Model
         $contentToLinksMap = [];
         if($contentIds)
         {
-            $links = $this->web_slave->getResultsByCondition($this->tbl_link_name,sprintf('page_content_id IN (%s)',implode(',',$contentIds)),'id,name');
+            $links = $this->web_slave->getResultsByCondition($this->tbl_link_name,sprintf('page_content_id IN (%s) ORDER BY sort_num ASC',implode(',',$contentIds)));
             if($links)
             {
                 foreach ($links as $link)
@@ -394,10 +389,16 @@ class PageModel extends Halo_Model
 
         foreach ($paramsMap as &$item)
         {
-            $cId = $item['id'];
-            if(array_key_exists($cId,$contentToLinksMap))
+            if(is_array($item))
             {
-                $item['links'] = $contentToLinksMap[$cId];
+                foreach ($item as &$itemValue)
+                {
+                    $cId = $itemValue['id'];
+                    if(array_key_exists($cId,$contentToLinksMap))
+                    {
+                        $itemValue['links'] = $contentToLinksMap[$cId];
+                    }
+                }
             }
 
         }

@@ -74,14 +74,19 @@ class PageController extends BaseController
         $params['cid']=$this->cid;
 
         $params['name']=$this->getLegalParam('name','str');
-        $params['title']=$this->getLegalParam('title','str');
-        $params['content']=$this->getLegalParam('content','str');
-        $params['img']=$this->getLegalParam('img','str');
+        $params['page_type_id']=$this->getLegalParam('page_type_id','int');
+        $params['banner']=$this->getLegalParam('banner','str');
+        $params['extra']=$this->getLegalParam('extra','str','','');
+        $params['contents']=$this->getLegalParam('contents','raw','',[]);
 
         if(in_array(false,$params,true))
         {
             $this->inputParamErrorResult();
         }
+        $params['title']=$this->getLegalParam('title','str');
+        $params['keywords']=$this->getLegalParam('keywords','str');
+        $params['description']=$this->getLegalParam('description','str');
+
         $id = $this->getLegalParam('id','str');
         $model=  new PageModel();
         if (empty($id))

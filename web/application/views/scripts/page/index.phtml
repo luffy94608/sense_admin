@@ -62,6 +62,33 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">页面title</label>
+                        <input type="text" class="form-control" id="js_modal_title">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">页面关键字（keywords）</label>
+                        <input type="text" class="form-control" id="js_modal_keywords">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">页面描述（description）</label>
+                        <input type="text" class="form-control" id="js_modal_description">
+                    </div>
+                </div>
+            </div>
+
 
             <div class="row">
                 <div class="col-md-6">
@@ -83,9 +110,10 @@
                             {
                                 $id= $type['id'];
                                 $name= $type['name'];
+                                $url= $type['url'];
 
                                 $str.="
-                                    <option value={$id}>{$name}</option>
+                                    <option value={$id} data-url='{$url}'>{$name}</option>
                                     ";
                             }
                             echo $str;

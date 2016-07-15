@@ -24,6 +24,9 @@ $(document).ready(function(){
         inputLock : $('#js_modal_lock'),
         inputSolution : $('#js_modal_solution'),
         inputHead : $('#js_modal_head'),
+        inputTitle : $('#js_modal_title'),
+        inputKeywords : $('#js_modal_keywords'),
+        inputDesc : $('#js_modal_description'),
 
         paramsAddBtn : $('.js_modal_params_add_btn'),
         paramsSection : $('.js_modal_params'),
@@ -214,6 +217,11 @@ $(document).ready(function(){
             init.bannerPreview.attr('src',host+data.banner).removeClass('gone');
             init.inputType.val(data.page_type_id).prop('disabled',true);
 
+            init.inputTitle.val(data.title);
+            init.inputKeywords.val(data.keywords);
+            init.inputDesc.val(data.description);
+
+
             var typeId= parseInt(data.page_type_id);
             switch (typeId)
             {
@@ -247,6 +255,10 @@ $(document).ready(function(){
         clearModalFormData : function () {
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('new'));
+
+            init.inputTitle.val('');
+            init.inputKeywords.val('');
+            init.inputDesc.val('');
 
             init.inputBanner.val('');
             init.bannerPreview.attr('src','').addClass('gone');
@@ -310,8 +322,12 @@ $(document).ready(function(){
                     var params = {
                         id:id,
                         name:$.trim(init.inputName.val()),
+                        title:$.trim(init.inputTitle.val()),
+                        keywords:$.trim(init.inputKeywords.val()),
+                        description:$.trim(init.inputDesc.val()),
                         banner:$.trim(init.inputBanner.val()),
                         page_type_id:parseInt($.trim(init.inputType.val())),
+                        url:$('#js_modal_type').find('option:checked').data('url'),
                         download_ids:$.trim(init.inputDownload.select2('val')),
                         lock_id:$.trim(init.inputLock.val()),
                         solution_id:$.trim(init.inputSolution.val()),

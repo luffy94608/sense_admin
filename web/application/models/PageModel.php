@@ -359,10 +359,13 @@ class PageModel extends Halo_Model
     public function addExtraInfo(&$result)
     {
         $pageIds = [];
+        $typeIds = [];
         foreach ($result as $v)
         {
             $pageIds[] = $v['id'];
+            $typeIds[] = $v['page_type_id'];
         }
+        //content
         $paramsResult = $this->web_slave->getResultsByCondition($this->tbl_content_name,sprintf('page_id IN (%s) ORDER BY sort_num ASC',implode(',',$pageIds)));
         $paramsMap = [];
         $contentIds = [];
@@ -374,7 +377,7 @@ class PageModel extends Halo_Model
                 $contentIds[] = $item['id'];
             }
         }
-
+        //link
         $contentToLinksMap = [];
         if($contentIds)
         {
@@ -401,14 +404,31 @@ class PageModel extends Halo_Model
                     }
                 }
             }
-
         }
+
+        //type
+        $typeIds = array_unique($typeIds);
+        $typeMap = [];
+        $typeResult = $this->web_slave->getResultsByCondition($this->tbl_type_name,sprintf('id IN (%s)',implode(',',$typeIds)));
+        if($typeResult)
+        {
+            foreach ($typeResult as $typeItem)
+            {
+                $typeMap[$typeItem['id']]=$typeItem;
+            }
+        }
+
         foreach ($result as &$v)
         {
             $id = $v['id'];
             if(array_key_exists($id,$paramsMap))
             {
                 $v['contents'] = $paramsMap[$id];
+            }
+
+            if(array_key_exists($v['page_type_id'],$typeMap))
+            {
+                $v['type'] = $typeMap[$v['page_type_id']];
             }
 
         }

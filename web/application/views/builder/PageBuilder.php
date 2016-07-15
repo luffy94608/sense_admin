@@ -44,10 +44,17 @@ class PageBuilder
             $img = $host.$img;
             $img = "<img src='{$img}' class='table-img'>";
         }
+        $type = $item['type'];
+        $url = $item['type']['url'];
+        if($type['status'] == 1)
+        {
+            $url = sprintf('%s%s',$url,$item['id']);
+        }
         $html="
                 <tr  data-id='{$id}'  data-info='{$info}'>
                     <td>{$img}</td>
                     <td>{$name}</td>
+                    <td>{$url}</td>
                     <td>
                         <a href='javascript:;' class='btn default btn-sm blue js_edit'>
                             <i class='fa fa-edit'></i> 

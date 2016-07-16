@@ -25,7 +25,7 @@ class BannerModel extends Halo_Model
      */
     public function getList()
     {
-        $result = $this->web_slave->getResultsByCondition('banners',HaloPdo::condition('id>0 ORDER BY updated_at DESC'));
+        $result = $this->web_slave->getResultsByCondition('banners',HaloPdo::condition('id>0 ORDER BY sort_num ASC'));
         if ($result) {
 
         }
@@ -106,6 +106,14 @@ class BannerModel extends Halo_Model
         return  $this->web->delRowByCondition2('banners',HaloPdo::condition('id = ?',$id));
     }
 
+    /**
+     * @param $data
+     * @return int
+     */
+    public function saveSort($data)
+    {
+        return $this->web->batchUpdateData('banners',array_keys($data[0]),$data,'sort_num= values(sort_num)');
+    }
 
 }
 

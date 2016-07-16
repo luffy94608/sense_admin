@@ -272,4 +272,34 @@ class HomeController extends BaseController
         $this->inputResult();
     }
 
+    /**
+     * 保存排序
+     */
+    public function saveBannerSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new BannerModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
+    /**
+     * 保存排序
+     */
+    public function savePartnerSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new PartnerModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
 }

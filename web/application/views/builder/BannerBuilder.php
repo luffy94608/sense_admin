@@ -58,6 +58,14 @@ class BannerBuilder
                     <td>{$btnName}</td>
                     <td>{$btnUrl}</td>
                     <td>{$url}</td>
+                     <td>
+                         <a href=\"javascript:;\" class=\"btn default green js_up\">
+                            <i class=\"fa fa-arrow-up\"></i>
+                        </a>
+                        <a href=\"javascript:;\" class=\"btn default  js_down\">
+                            <i class=\"fa fa-arrow-down\"></i>
+                        </a>
+                    </td>
                     <td>
                         <a href='javascript:;' class='btn default btn-sm blue js_edit'>
                             <i class='fa fa-edit'></i> 
@@ -118,6 +126,14 @@ class BannerBuilder
                 <tr  data-info='{$info}' data-id='{$id}'>
                     <td>{$logo}</td>
                     <td>{$url}</td>
+                     <td>
+                         <a href=\"javascript:;\" class=\"btn default green js_up\">
+                            <i class=\"fa fa-arrow-up\"></i>
+                        </a>
+                        <a href=\"javascript:;\" class=\"btn default  js_down\">
+                            <i class=\"fa fa-arrow-down\"></i>
+                        </a>
+                    </td>
                     <td>
                         <a href='javascript:;' class='btn default btn-sm blue js_edit'>
                             <i class='fa fa-edit'></i> 

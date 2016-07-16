@@ -665,9 +665,11 @@ class ManageController extends BaseController
         $params['name']=$this->getLegalParam('name','str');
         $params['url']=$this->getLegalParam('url','str','','');
         $params['page_id']=$this->getLegalParam('page_id','str','','');
+        $params['parent_id']=$this->getLegalParam('parent_id','str','',0);
         $params['params']=$this->getLegalParam('params','raw','',[]);
         $params['type'] = $this->getLegalParam('type','enum',[0,1,2],0);//1一级菜单 2二级菜单
         $params['btn_type'] = $this->getLegalParam('btn_type','enum',[0,1],0);//0 自定义跳转 1单页选择
+        $params['show_type'] = $this->getLegalParam('show_type','enum',[0,1],0);//0 自定义跳转 1单页选择
         $params['target'] = $this->getLegalParam('target','str');
 
         $params['module'] = $this->getLegalParam('module','enum',[0,1],0);

@@ -411,11 +411,17 @@ class ManageBuilder
         $info=json_encode($item);
         $id = $item['id'];
         $name = $item['name'];
+        $typeMap = [
+            0=>'子菜单',
+            1=>'一级菜单',
+            2=>'二级菜单',
+        ];
+        $typeTitle = $typeMap[$item['type']];
+
         $html.="
                 <tr  data-info='{$info}' data-id='{$id}'>
                     <td>{$name}</td>
-                    <td>{$name}</td>
-                    <td>{$name}</td>
+                    <td>{$typeTitle}</td>
                     <td>
                          <a href=\"javascript:;\" class=\"btn default green js_up\">
                             <i class=\"fa fa-arrow-up\"></i>

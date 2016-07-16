@@ -21,6 +21,7 @@ class MenuModel extends Halo_Model
         'type'=>'type',
         'module'=>'module',
         'btn_type'=>'btn_type',
+        'show_type'=>'show_type',
         'status'=>'status',
         'parent_id'=>'parent_id',
         'target'=>'target',

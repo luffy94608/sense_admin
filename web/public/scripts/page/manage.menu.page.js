@@ -13,6 +13,7 @@ $(document).ready(function(){
         inputType : $('#js_modal_type'),
         inputTarget : $('#js_modal_target'),
         inputParent : $('#js_modal_parent'),
+        inputShowType : $('#js_modal_show_type'),
         inputBtnTypeNode : '.js_radio_btn_type',
         inputUrl : $('#js_modal_url'),
         inputPage : $('#js_modal_page'),
@@ -103,6 +104,7 @@ $(document).ready(function(){
             init.initTypeShowEvent(data.type);
             init.inputTarget.val(data.target);
             init.inputParent.val(data.parent_id);
+            init.inputShowType.val(data.show_type);
             $(init.inputBtnTypeNode).eq(data.btn_type).prop('checked',true);
             init.initBtnTypeShowEvent(data.btn_type);
             init.inputUrl.val(data.url);
@@ -124,16 +126,20 @@ $(document).ready(function(){
             init.initTypeShowEvent(1);
             init.inputTarget.val('_self');
             init.inputParent.val(0);
+            init.inputShowType.val(0);
             $(init.inputBtnTypeNode).eq(0).prop('checked',true);
             init.initBtnTypeShowEvent(0);
             init.inputUrl.val('');
             // init.inputPage.val('');
             var module =$.trim($('.nav-tabs li.active').data('id'));
             var typeSec = $('.js_modal_type_sec');
+            var showTypeSec = $('.js_modal_show_type_sec');
             if(module == 1){
                 typeSec.addClass('gone');
+                showTypeSec.addClass('gone');
             }else{
                 typeSec.removeClass('gone');
+                showTypeSec.removeClass('gone');
             }
 
             init.clearModalParamsData();
@@ -141,10 +147,17 @@ $(document).ready(function(){
 
         initTypeShowEvent:function (val) {
             var obj = $('.js_modal_parent_section');
+            var obj2 = $('.js_modal_show_type_sec');
+
             if(val ==2){
                 obj.removeClass('gone');
+                obj2.addClass('gone');
             }else{
                 obj.addClass('gone');
+                var module = $.trim($('.nav-tabs li.active').data('id'));
+                if(module == 0){
+                    obj2.removeClass('gone');
+                }
             }
         },
         initBtnTypeShowEvent:function (val) {
@@ -249,6 +262,7 @@ $(document).ready(function(){
                         type:$.trim(init.inputType.val()),
                         target:$.trim(init.inputTarget.val()),
                         parent_id:$.trim(init.inputParent.val()),
+                        show_type:$.trim(init.inputShowType.val()),
                         btn_type:$.trim($(init.inputBtnTypeNode+':checked').val()),
                         url:$.trim(init.inputUrl.val()),
                         page_id:$.trim(init.inputPage.val()),

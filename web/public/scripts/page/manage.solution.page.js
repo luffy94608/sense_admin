@@ -183,12 +183,11 @@ $(document).ready(function(){
                 if(!target){
                     return false;
                 }
-                target = $(target);
-                var bakTarget = target.clone();
-                var bakCurrent =  $parent.clone();
-
-                target.replaceWith(bakCurrent);
-                $parent.replaceWith(bakTarget);
+                if($this.hasClass('js_up')){
+                    $(target).before($parent);
+                }else{
+                    $(target).after($parent);
+                }
             });
 
 

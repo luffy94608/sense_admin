@@ -19,6 +19,8 @@ class MenuModel extends Halo_Model
         'url'=>'url',
         'page_id'=>'page_id',
         'type'=>'type',
+        'module'=>'module',
+        'btn_type'=>'btn_type',
         'status'=>'status',
         'parent_id'=>'parent_id',
         'target'=>'target',
@@ -51,6 +53,10 @@ class MenuModel extends Halo_Model
 
         $result = $this->web->insertTable($this->tbl_name,$data);
 
+        if($result && !empty($params['params']))
+        {
+            $this->updateSubMenus($result,$params['params']);
+        }
 
         return $result;
     }
@@ -61,7 +67,7 @@ class MenuModel extends Halo_Model
      * @param $params
      * @return bool|int
      */
-    public function updatePage($id,$params)
+    public function updateMenu($id,$params)
     {
         if(!empty($params))
         {
@@ -75,13 +81,12 @@ class MenuModel extends Halo_Model
                 }
             }
 
-            $data['updated_at'] = date('Y-m-d H:i:s');
-
             $this->web->updateTable($this->tbl_name,$data,HaloPdo::condition('id = ?',$id));
-            if($id && empty($params))
+            if($id && !empty($params['params']))
             {
+                $this->updateSubMenus($id,$params['params']);
             }
-            return false;
+            return true;
         }
         return false;
     }
@@ -90,37 +95,75 @@ class MenuModel extends Halo_Model
      * @param $id
      * @return int
      */
-    public function deletePage($id)
+    public function deleteMenu($id)
     {
         $result =  $this->web->delRowByCondition2($this->tbl_name,HaloPdo::condition('id = ?',$id));
+        if($result){
+            $this->web->delRowByCondition2($this->tbl_name,HaloPdo::condition('parent_id = ?',$id));
+        }
 
         return $result;
+    }
+
+    /**
+     * 获取二级菜单
+     * @return array
+     */
+    public function getSubMenuList()
+    {
+        $res = [];
+        $result = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('parent_id = 0 AND type=1 AND module = 0'));
+        if($result)
+        {
+            $ids = [];
+            foreach ($result as $v)
+            {
+                $ids[]= $v['id'];
+            }
+            $result2 = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('parent_id IN (%s)',implode(',',$ids)));
+            $res = $result2;
+        }
+        return $res;
     }
 
     /**
      * 获取叶敏啊 列表
      * @return array
      */
-    public function getPageList()
+    public function getMenuList($module)
     {
-        $result = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('id>0  ORDER BY updated_at DESC'));
-        $total = $this->web_slave->getCountByCondition($this->tbl_name,HaloPdo::condition('id>0'));
+        $result = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('type IN (1,2) AND module = %d ORDER BY sort_num ASC',$module));
+        if($result)
+        {
+            $this->addExtraInfo($result);
+        }
         $data = [
-          'list'=>$result ? $result : [],
-          'total'=>intval($total),
+            'list'=>$result ? $result : [],
+            'total'=>0,
         ];
         return $data;
     }
+
 
     /**
      * 获取类别 详情
      * @param $id
      * @return array|bool|mixed|null|string
      */
-    public function getPageDetail($id)
+    public function getMenuDetail($id)
     {
-        $result = $this->web_slave->getRowByCondition($this->tbl_name,HaloPdo::condition('id= ?',$id));
+        $result = $this->web_slave->getResultsByCondition($this->tbl_name,HaloPdo::condition('id= ?',$id));
+        if($result)
+        {
+            $this->addExtraInfo($result);
+            $result = $result[0];
+        }
         return $result;
+    }
+
+    public function saveSort($data)
+    {
+        return $this->web->batchUpdateData($this->tbl_name,array_keys($data[0]),$data,'sort_num= values(sort_num)');
     }
 
     /**
@@ -161,9 +204,9 @@ class MenuModel extends Halo_Model
 
                 foreach($maps as $k=>$v)
                 {
-                    if(array_key_exists($v,$param) && $v!==false)
+                    if(array_key_exists($v,$param) && $param[$v]!==false)
                     {
-                        $tmpItem[$k]=$params[$v];
+                        $tmpItem[$k]=$param[$v];
                         $batchUpdateStrArr[] = sprintf('%s=VALUES(%s)',$k,$k);
                     }
                 }
@@ -220,17 +263,17 @@ class MenuModel extends Halo_Model
     }
 
     /**
-     * 批量更新页面内容链接 type
-     * @param $pageId
+     * 批量 menu
+     * @param $id
      * @param $params
      * @return bool|int
      */
-    public function updatePageLinks($pageId,$params)
+    public function updateSubMenus($id,$params)
     {
         $relationKey = 'parent_id';
         $maps  = $this->keyMap;
         $tbl_name = $this->tbl_name;
-        $this->updateCommonParams($tbl_name,$relationKey,$maps,$pageId,$params);
+        $this->updateCommonParams($tbl_name,$relationKey,$maps,$id,$params);
 
     }
 
@@ -238,48 +281,48 @@ class MenuModel extends Halo_Model
      * 添加类别参数信息
      * @param $result
      */
-    public function addLockExtraInfo(&$result)
+    public function addExtraInfo(&$result)
     {
-        $lockIds = [];
+        $ids = [];
         $typeIds = [];
         foreach ($result as $v)
         {
-            $lockIds[] = $v['id'];
+            $ids[] = $v['id'];
             $typeIds[] = $v['lock_type_id'];
         }
-        $paramsResult = $this->web_slave->getResultsByCondition('lock_params',sprintf('lock_id IN (%s) ORDER BY sort_num ASC',implode(',',$lockIds)));
+        $paramsResult = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('parent_id IN (%s) ORDER BY sort_num ASC',implode(',',$ids)));
         $paramsMap = [];
         if($paramsResult)
         {
             foreach ($paramsResult as $item)
             {
-                $paramsMap[$item['lock_id']][] = $item;
+                $paramsMap[$item['parent_id']][] = $item;
             }
         }
-
-        $typeIds = array_unique($typeIds);
-        $types = $this->web_slave->getResultsByCondition('lock_types',sprintf('id IN (%s)',implode(',',$typeIds)),'id,name');
-        $typeMap = [];
-        if($types)
-        {
-            foreach ($types as $type)
-            {
-                $typeMap[$type['id']] = $type;
-            }
-        }
+//
+//        $typeIds = array_unique($typeIds);
+//        $types = $this->web_slave->getResultsByCondition('lock_types',sprintf('id IN (%s)',implode(',',$typeIds)),'id,name');
+//        $typeMap = [];
+//        if($types)
+//        {
+//            foreach ($types as $type)
+//            {
+//                $typeMap[$type['id']] = $type;
+//            }
+//        }
 
         foreach ($result as &$v)
         {
-            $lockId = $v['id'];
-            $tmpTypeId = $v['lock_type_id'];
-            if(array_key_exists($tmpTypeId,$typeMap))
-            {
-                $v['type'] = $typeMap[$tmpTypeId];
-            }
-            if(array_key_exists($lockId,$paramsMap))
+            $parentId = $v['id'];
+//            $tmpTypeId = $v['lock_type_id'];
+//            if(array_key_exists($tmpTypeId,$typeMap))
+//            {
+//                $v['type'] = $typeMap[$tmpTypeId];
+//            }
+            if(array_key_exists($parentId,$paramsMap))
             {
 
-                $v['params'] = $paramsMap[$lockId];
+                $v['params'] = $paramsMap[$parentId];
             }
         }
     }

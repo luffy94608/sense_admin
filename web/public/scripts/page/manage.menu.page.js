@@ -9,13 +9,15 @@ $(document).ready(function(){
         uploadImageBtn: '.js_upload_image',
         uploadProgressModal: '#uploadAppProgressModal',
 
-        inputTitle : $('.js_modal_title'),
-        inputImgPosition : $('.js_modal_position'),
-        inputPic : $('.js_modal_img'),
-        inputIcon : $('.js_modal_icon'),
-        inputIconActive : $('.js_modal_icon_active'),
-        inputSubTitle : $('.js_modal_sub_title'),
-        inputContent : $('.js_modal_content'),
+        inputName : $('#js_modal_name'),
+        inputType : $('#js_modal_type'),
+        inputTarget : $('#js_modal_target'),
+        inputParent : $('#js_modal_parent'),
+        inputBtnTypeNode : '.js_radio_btn_type',
+        inputUrl : $('#js_modal_url'),
+        inputPage : $('#js_modal_page'),
+
+        typeParams : '',
 
         paramsAddBtn : $('.js_modal_params_add_btn'),
         paramsSection : $('.js_modal_params'),
@@ -43,15 +45,22 @@ $(document).ready(function(){
             if(len)
             {
                 objs.each(function (key) {
-                    var tmpObj = $(this).find('input');
-                    var tmpSelectObj = $(this).find('select');
                     var params = {
-                        id:  $.trim(tmpObj.eq(0).val()),
-                        name:  $.trim(tmpObj.eq(1).val()),
-                        url:  $.trim(tmpObj.eq(2).val()),
-                        target:  $.trim(tmpSelectObj.val()),
+                        id:  $.trim($(this).find('.js_mp_id').val()),
+                        name:  $.trim($(this).find('.js_mp_name').val()),
+                        target:  $.trim($(this).find('.js_mp_target').val()),
+                        btn_type:  $.trim($(this).find('.js_mp_btn_type').val()),
+                        url:  $.trim($(this).find('.js_mp_url').val()),
+                        module:$.trim($('.nav-tabs li.active').data('id')),
+                        page_id:  $.trim($(this).find('.js_mp_page').val()),
                         sort_num:  key+1
                     };
+                    if(params.btn_type == 1){
+                        params.url = '';
+                    }else{
+                        params.page_id = '';
+                    }
+
                     if(params.name.length){
                         res.push(params);
                     }
@@ -64,13 +73,18 @@ $(document).ready(function(){
             {
                 data.forEach(function (value) {
                     var node = init.paramsCloneNode.clone();
-                    var tmpObj = $(node).find('input');
-                    var tmpSelectObj = $(node).find('select');
-                    tmpObj.eq(0).val(value.id);
-                    tmpObj.eq(1).val(value.name);
-                    tmpObj.eq(2).val(value.url);
-                    tmpSelectObj.val(value.target);
+                    $(node).find('.js_mp_id').val(value.id);
+                    $(node).find('.js_mp_name').val(value.name);
+                    $(node).find('.js_mp_target').val(value.target);
+                    $(node).find('.js_mp_btn_type').val(value.btn_type);
+                    $(node).find('.js_mp_url').val(value.url);
+                    $(node).find('.js_mp_page').val(value.page_id);
                     init.paramsSectionList.append(node);
+
+                    var targetNodes = $(node).find('.js_mp_btn_type_target_sec');
+                    targetNodes.addClass('gone');
+                    targetNodes.eq(value.btn_type).removeClass('gone');
+
                 });
             }
         },
@@ -84,21 +98,18 @@ $(document).ready(function(){
         setModalFormData : function (data) {
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('edit'));
-            init.inputTitle.val(data.title);
-            init.inputSubTitle.val(data.sub_title);
-            init.inputImgPosition.val(data.position);
-            init.inputPic.val(data.pic);
-            init.inputIcon.val(data.icon);
-            init.inputIconActive.val(data.icon_active);
-            init.inputContent.val(data.content);
+            init.inputName.val(data.name);
+            init.inputType.val(data.type);
+            init.initTypeShowEvent(data.type);
+            init.inputTarget.val(data.target);
+            init.inputParent.val(data.parent_id);
+            $(init.inputBtnTypeNode).eq(data.btn_type).prop('checked',true);
+            init.initBtnTypeShowEvent(data.btn_type);
+            init.inputUrl.val(data.url);
+            init.inputPage.val(data.page_id);
 
-            var host = document.global_config_data.img_host;
-            $(init.inputPic.data('preview')).attr('src',host+data.pic).removeClass('gone');
-            $(init.inputIcon.data('preview')).attr('src',host+data.icon).removeClass('gone');
-            $(init.inputIconActive.data('preview')).attr('src',host+data.icon_active).removeClass('gone');
-
-            if(data.links){
-                init.setModalParamsData(data.links);
+            if(data.params){
+                init.setModalParamsData(data.params);
             }
         },
         /**
@@ -108,42 +119,109 @@ $(document).ready(function(){
             var modalTitle = init.modal.find('.modal-title');
             modalTitle.html(modalTitle.data('new'));
 
-            init.inputTitle.val('');
-            init.inputSubTitle.val('');
-            init.inputImgPosition.val(0);
-            init.inputPic.val('');
-            init.inputIcon.val('');
-            init.inputIconActive.val('');
-            init.inputContent.val('');
+            init.inputName.val('');
+            init.inputType.val(1);
+            init.initTypeShowEvent(1);
+            init.inputTarget.val('_self');
+            init.inputParent.val(0);
+            $(init.inputBtnTypeNode).eq(0).prop('checked',true);
+            init.initBtnTypeShowEvent(0);
+            init.inputUrl.val('');
+            // init.inputPage.val('');
+            var module =$.trim($('.nav-tabs li.active').data('id'));
+            var typeSec = $('.js_modal_type_sec');
+            if(module == 1){
+                typeSec.addClass('gone');
+            }else{
+                typeSec.removeClass('gone');
+            }
 
-            $(init.inputPic.data('preview')).attr('src','').addClass('gone');
-            $(init.inputIcon.data('preview')).attr('src','').addClass('gone');
-            $(init.inputIconActive.data('preview')).attr('src','').addClass('gone');
             init.clearModalParamsData();
         },
 
-        /**
-         * 上传文件
-         */
-        initUploadEvent:function () {
-            $(init.uploadImageBtn).unbind().bind('click',function(){
-                var $this = $(this);
-                var modal = $(init.uploadProgressModal);
-                $(this).uploadImage('/upload/upload-image',{request_type:'ajax'},function (data) {
-                    var id = $this.data('id');
-                    if(data.res){
-                        $(id).val(data.path);
-                        $(id+'_preview').attr('src',data.url).removeClass('gone');
-                    }
-                    modal.modal('hide');
-                    $('.progress-bar',modal).css('width',0);
-                },function (percent) {
-                    modal.modal({backdrop:'static',keyboard:false});
-                    $('.progress-bar',modal).css('width',percent+'%');
+        initTypeShowEvent:function (val) {
+            var obj = $('.js_modal_parent_section');
+            if(val ==2){
+                obj.removeClass('gone');
+            }else{
+                obj.addClass('gone');
+            }
+        },
+        initBtnTypeShowEvent:function (val) {
+            $('.js_radio_target_section').addClass('gone');
+            if(val == 1){
+                // $(init.inputBtnTypeNode).eq(1).prop('checked',true);
+                $('.js_modal_page_section').removeClass('gone');
+            }else{
+                // $(init.inputBtnTypeNode).eq(0).prop('checked',true);
+                $('.js_modal_url_section').removeClass('gone');
+            }
+        },
 
-                });
 
+        btnSwitchEvent:function () {
+            //btn type
+            $(init.inputBtnTypeNode).unbind().bind('change',function () {
+                var val = $(this).val();
+                init.initBtnTypeShowEvent(val);
             });
+            //type
+            init.inputType.unbind().bind('change',function () {
+                var val = $(this).val();
+                init.initTypeShowEvent(val);
+            });
+            //params item btn type()
+            $(document).on('change','.js_mp_btn_type',function () {
+                var val = $(this).val();
+                var parent = $(this).parents('.js_modal_param');
+                $('.js_mp_btn_type_target_sec',parent).addClass('gone');
+                if(val == 0){
+                    parent.find('.js_mp_url_sec').removeClass('gone');
+                }else{
+                    parent.find('.js_mp_page_sec').removeClass('gone');
+                }
+            });
+        },
+        initTabEvent : function () {
+            $('.nav-tabs li').unbind().bind('click',function () {
+                init.typeParams = $(this).data('id');
+                init.pagerObj.updateList(0);
+            });
+        },
+
+        /**
+         * 详情pager
+         */
+        initPager : function () {
+            init.pagerObj = $('#wrapperPageList').Pager({
+                protocol:'/manage/get-menu-list-ajax',
+                listSize:20,
+                onPageInitialized:function(){
+                    if (init.pagerObj){
+                        var top=$(window).scrollTop();
+                        if(top>100){
+                            $(window).scrollTop(0);
+                        }
+                    }
+                },
+                wrapUpdateData:function(idx,data){
+                    var type = $('.nav-tabs li.active').data('id');
+                    if(init.typeParams.toString().length){
+                        type = init.typeParams;
+                    }
+                    var params = {
+                        module:type,
+                    };
+
+
+                    if (params){
+                        $.extend(data, params);
+                    }
+                    return data;
+                }
+            });
+
+            init.pagerObj.updateList(0);
         },
 
         /**
@@ -167,23 +245,19 @@ $(document).ready(function(){
                 submitBtn.unbind().bind('click',function () {
                     var params = {
                         id:id,
-                        title:$.trim(init.inputTitle.val()),
-                        sub_title:$.trim(init.inputSubTitle.val()),
-                        position:$.trim(init.inputImgPosition.val()),
-                        pic:$.trim(init.inputPic.val()),
-                        icon:$.trim(init.inputIcon.val()),
-                        icon_active:$.trim(init.inputIconActive.val()),
-                        content:$.trim(init.inputContent.val()),
-                        links:init.getModalParamsData()
+                        name:$.trim(init.inputName.val()),
+                        type:$.trim(init.inputType.val()),
+                        target:$.trim(init.inputTarget.val()),
+                        parent_id:$.trim(init.inputParent.val()),
+                        btn_type:$.trim($(init.inputBtnTypeNode+':checked').val()),
+                        url:$.trim(init.inputUrl.val()),
+                        page_id:$.trim(init.inputPage.val()),
+                        module:$.trim($('.nav-tabs li.active').data('id')),
+                        params:init.getModalParamsData()
                     };
 
                     var checkMap = {
-                        title:'请输入标题',
-                        pic:'请上传图片',
-                        icon:'请上传icon',
-                        icon_active:'请上传icon选中图标',
-                        sub_title:'请输入描述',
-                        content:'请输入内容',
+                        name:'请输入菜单名称',
                     };
                     for (var key in checkMap){
                         if(!params[key] || params[key].length<1){
@@ -191,10 +265,24 @@ $(document).ready(function(){
                             return false;
                         }
                     }
+                    if(params.type==2) {
+                        if(params.parent_id<1){
+                            $.showToast('请选择父级菜单',false);
+                            return false;
+                        }
+                    }else{
+                        params.parent_id = '';
+                    }
 
-                    $.wpost('/home/update-list-ajax',params,function(res){
+                    if(params.btn_type==1) {
+                        params.url = '';
+                    }else{
+                        params.page_id = '';
+                    }
+
+                    $.wpost('/manage/update-menu-ajax',params,function(res){
                         if(!params.id){
-                            init.listContainer.append(res)
+                            init.listContainer.prepend(res)
                         }else{
                             $parent.replaceWith(res)
                         }
@@ -212,7 +300,7 @@ $(document).ready(function(){
                 var $parent=$this.parents('tr');
                 var id=$parent.attr('data-id');
                 $.confirm({content:'确认删除吗',success:function(){
-                    $.wpost('/home/delete-list-ajax',{id:id},function(){
+                    $.wpost('/manage/delete-menu-ajax',{id:id},function(){
                         $.showToast('删除成功',true);
                         $this.parents('tr').remove();
                     });
@@ -237,12 +325,17 @@ $(document).ready(function(){
                 if(!target){
                     return false;
                 }
-                target = $(target);
-                var bakTarget = target.clone();
-                var bakCurrent =  $parent.clone();
-
-                target.replaceWith(bakCurrent);
-                $parent.replaceWith(bakTarget);
+                if($this.hasClass('js_up')){
+                    $(target).before($parent);
+                }else{
+                    $(target).after($parent);
+                }
+                // target = $(target);
+                // var bakTarget = target.clone();
+                // var bakCurrent =  $parent.clone();
+                //
+                // target.replaceWith(bakCurrent);
+                // $parent.replaceWith(bakTarget);
             });
 
             /**
@@ -269,7 +362,7 @@ $(document).ready(function(){
                     $.showToast('无可排序的数据',false);
                     return false;
                 }
-                $.wpost('/home/save-list-sort-ajax',{params:params},function(){
+                $.wpost('/manage/save-menu-sort-ajax',{params:params},function(){
                     $.showToast('保存成功',true);
                 });
             });
@@ -278,7 +371,9 @@ $(document).ready(function(){
 
         },
         run : function () {
-            init.initUploadEvent();
+            init.btnSwitchEvent();
+            init.initTabEvent();
+            init.initPager();
             init.initModalParamsEvent();
             init.initBtnEvent();
         }

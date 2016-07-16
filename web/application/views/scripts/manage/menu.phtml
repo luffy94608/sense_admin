@@ -2,7 +2,7 @@
     <div class="portlet box black">
         <div class="portlet-title">
             <div class="caption">
-                导航栏
+                菜单管理
             </div>
             <div class="tools">
 
@@ -12,10 +12,25 @@
                     <i class="fa fa-plus"></i>
                     添加菜单
                 </a>
-
+                <a href="javascript:;" class="btn btn-default btn-sm js_sort_save">
+                    <i class="fa fa-save"></i> 保存排序
+                </a>
             </div>
         </div>
         <div class="portlet-body" id="wrapperPageList">
+            <div class="tabbable-line">
+                <ul class="nav nav-tabs">
+                    <li class="fr active" data-id="0">
+                        <a href="#" data-toggle="tab" aria-expanded="false">导航栏</a>
+                    </li>
+                    <li class="fr " data-id="1">
+                        <a href="#" data-toggle="tab" aria-expanded="true">网站地图</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
             <div class="table-scrollable" >
                 <table class="table table-striped table-bordered table-hover table-middle" align="center">
                     <thead>
@@ -28,6 +43,7 @@
                     </tr>
                     </thead>
                     <tbody class="js_table_list" id="list">
+                        <?php echo $this->html;?>
                     </tbody>
                 </table>
             </div>
@@ -53,16 +69,16 @@
                         <span class="help-block"></span>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 js_modal_type_sec">
                     <div class="form-group">
                         <label class="control-label">菜单类型</label>
                         <select class="form-control" id="js_modal_type">
-                            <option>一级菜单</option>
-                            <option>二级菜单</option>
+                            <option value="1">一级菜单</option>
+                            <option value="2">二级菜单</option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 ">
                     <div class="form-group">
                         <label class="control-label" id="js_modal_target">target</label>
                         <select class="form-control" >
@@ -71,12 +87,24 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-12 js_modal_parent_section gone">
                     <div class="form-group">
                         <label class="control-label">父级菜单</label>
                         <select class="form-control" id="js_modal_parent" >
-                            <option value="_self">_self</option>
-                            <option value="_blank">_blank</option>
+                            <option value="0">请选择父级菜单</option>
+                            <?php
+                                $subMenus = $this->subMenus;
+                                $pageOptionsHtml = '';
+                                foreach ($subMenus as $subMenu)
+                                {
+                                    $id= $subMenu['id'];
+                                    $name= $subMenu['name'];
+                                    $pageOptionsHtml.="
+                                            <option value={$id}>{$name}</option>
+                                            ";
+                                }
+                                echo $pageOptionsHtml;
+                            ?>
                         </select>
                     </div>
                 </div>
@@ -87,7 +115,7 @@
                             <!--                                <label>Checkboxes</label>-->
                             <div class="md-radio-inline">
                                 <div class="md-radio">
-                                    <input type="radio" id="radio_type_0" data-id="#js_list_type_section" name="radio_type" class="md-radiobtn js_radio_type" value="0">
+                                    <input type="radio" id="radio_type_0" data-id=".js_modal_url_section" name="radio_type" class="md-radiobtn js_radio_btn_type" value="0">
                                     <label for="radio_type_0">
                                         <span class="inc"></span>
                                         <span class="check"></span>
@@ -96,7 +124,7 @@
                                     </label>
                                 </div>
                                 <div class="md-radio">
-                                    <input type="radio" id="radio_type_1" data-id="#js_download_type_section" name="radio_type" class="md-radiobtn js_radio_type" value="1">
+                                    <input type="radio" id="radio_type_1" data-id=".js_modal_page_section" name="radio_type" class="md-radiobtn js_radio_btn_type" value="1">
                                     <label for="radio_type_1">
                                         <span class="inc"></span>
                                         <span class="check"></span>
@@ -109,20 +137,20 @@
                     </div>
                 </div>
 
-                <div class="col-md-12">
+                <div class="col-md-12 js_modal_url_section js_radio_target_section">
                     <div class="form-group">
                         <label class="control-label"></label>
                         <input type="text" id="js_modal_url" class="form-control" placeholder="链接地址">
                         <span class="help-block"></span>
                     </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-12 js_modal_page_section js_radio_target_section">
                     <div class="form-group">
                         <label class="control-label"></label>
                         <select class="form-control" id="js_modal_page">
                             <?php
-                            $options = $this->pageOptions;
-                            $pageOptionsHtml = '';
+                                $options = $this->pageOptions;
+                                $pageOptionsHtml = '';
 
                                 foreach ($options as $option)
                                 {
@@ -150,17 +178,17 @@
                             <div class="js_modal_param">
                                 <div class="col-md-4 gone">
                                     <div class="form-group ">
-                                        <input type="hidden" class="form-control" placeholder="id" >
+                                        <input type="hidden" class="form-control js_mp_id" placeholder="id" >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group ">
-                                        <input type="text" class="form-control " placeholder="链接名称" >
+                                        <input type="text" class="form-control js_mp_name" placeholder="链接名称" >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group ">
-                                        <select class="form-control">
+                                        <select class="form-control js_mp_target">
                                             <option value="_self">_self</option>
                                             <option value="_blank">_blank</option>
                                         </select>
@@ -168,21 +196,21 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group ">
-                                        <select class="form-control">
+                                        <select class="form-control js_mp_btn_type">
                                             <option value="0">自定义</option>
                                             <option value="1">单页列表</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 gone">
+                                <div class="col-md-3  js_mp_url_sec js_mp_btn_type_target_sec">
                                     <div class="form-group ">
-                                        <input type="text" class="form-control " placeholder="链接地址" >
+                                        <input type="text" class="form-control js_mp_url" placeholder="链接地址" >
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 ">
+                                <div class="col-md-3 gone js_mp_page_sec js_mp_btn_type_target_sec">
                                     <div class="form-group ">
-                                        <select class="form-control">
+                                        <select class="form-control js_mp_page">
                                             <?php echo $pageOptionsHtml;?>
                                         </select>
                                     </div>

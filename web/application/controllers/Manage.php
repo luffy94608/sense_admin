@@ -620,32 +620,128 @@ class ManageController extends BaseController
         $this->inputResult();
     }
 
-
     /**
-     * 网站地图
-     */
-    public function mapAction()
-    {
-        $this->view->page='manage-map-page';
-    }
-
-    /**
-     * 网站地图
+     * menu
      */
     public function menuAction()
     {
         $this->view->page='manage-menu-page';
-
+        //menu
         $model = new PageModel();
         $pages = $model->getPageList();
         $this->view->pageOptions = $pages['list'];
-        
+
+        $menuModel = new MenuModel();
+        $subs = $menuModel->getSubMenuList();
+        $this->view->subMenus = $subs;
+
+
+
     }
 
+    public function getMenuListAjaxAction()
+    {
+        $params = $this->getPageParams();
+        $params['module'] = $this->getLegalParam('module','enum',[0,1],0);
+        $menuModel = new MenuModel();
+        $list = $menuModel->getMenuList($params['module']);
+        $html = ManageBuilder::toBuildMenuListHtml($list['list']);
+        $this->view->html = $html;
+        $data = [
+            'total' =>intval($list['total']),
+            'html' =>$html,
+        ];
+        $this->inputResult($data);
+    }
+
+    /**
+     * 创建或者修改 menu
+     */
     public function updateMenuAjaxAction()
     {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
 
+        $params['name']=$this->getLegalParam('name','str');
+        $params['url']=$this->getLegalParam('url','str','','');
+        $params['page_id']=$this->getLegalParam('page_id','str','','');
+        $params['params']=$this->getLegalParam('params','raw','',[]);
+        $params['type'] = $this->getLegalParam('type','enum',[0,1,2],0);//1一级菜单 2二级菜单
+        $params['btn_type'] = $this->getLegalParam('btn_type','enum',[0,1],0);//0 自定义跳转 1单页选择
+        $params['target'] = $this->getLegalParam('target','str');
+
+        $params['module'] = $this->getLegalParam('module','enum',[0,1],0);
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $id = $this->getLegalParam('id','str');
+
+        $model=  new MenuModel();
+        if (empty($id))
+        {
+            $result = $model->createMenu($params);
+            $params['id'] = $result;
+        }
+        else
+        {
+            $result = $model->updateMenu($id,$params);
+            $params['id'] = $id;
+        }
+
+        if($result>0)
+        {
+            $detail = $model->getMenuDetail($params['id']);
+            $html = ManageBuilder::toBuildMenuItem($detail);
+            $this->inputResult($html);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
     }
-    
+
+    /**
+     * 删除 知识和产权
+     */
+    public function deleteMenuAjaxAction()
+    {
+        $params['uid']=$this->uid;
+        $params['cid']=$this->cid;
+
+        $params['id']=$this->getLegalParam('id','str');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new MenuModel();
+        $result = $model->deleteMenu($params['id']);
+
+        if($result>0)
+        {
+            $this->inputResult($result);
+        }
+        else
+        {
+            $this->inputErrorWithDesc('操作失败');
+        }
+    }
+
+    /**
+     * 保存排序 知识和产权
+     */
+    public function saveMenuSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new MenuModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
+
 
 }

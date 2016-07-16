@@ -123,7 +123,7 @@ class CertsModel extends Halo_Model
      */
     public function getDetail($id)
     {
-        $result = $this->web_slave->getResultsByCondition($this->tbl_name,HaloPdo::condition('id= ?',$id));
+        $result = $this->web_slave->getRowByCondition($this->tbl_name,HaloPdo::condition('id= ?',$id));
         return $result;
     }
 

@@ -743,5 +743,37 @@ class ManageController extends BaseController
     }
 
 
+    /**
+     * 保存排序 招聘
+     */
+    public function saveRecruitSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new RecruitModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
+
+    /**
+     * 保存排序 新闻
+     */
+    public function saveNewsSortAjaxAction()
+    {
+        $params['params']=$this->getLegalParam('params','raw');
+        if(in_array(false,$params,true))
+        {
+            $this->inputParamErrorResult();
+        }
+        $model=  new NewsModel();
+        $model->saveSort($params['params']);
+        $this->inputResult();
+    }
+
+
 
 }

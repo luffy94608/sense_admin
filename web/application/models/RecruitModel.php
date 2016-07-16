@@ -98,11 +98,10 @@ class RecruitModel extends Halo_Model
      */
     public function getRecruitList($offset=0,$length =20)
     {
-        $result = $this->web_slave->getResultsByCondition('recruits',sprintf('id>0  ORDER BY updated_at DESC LIMIT %d OFFSET %d ',$length,$offset));
-        $total = $this->web_slave->getCountByCondition('recruits',HaloPdo::condition('id>0'));
+        $result = $this->web_slave->getResultsByCondition('recruits',sprintf('id>0  ORDER BY sort_num ASC'));
         $data = [
           'list'=>$result ? $result : [],
-          'total'=>intval($total),
+          'total'=>0,
         ];
         return $data;
     }
@@ -117,6 +116,12 @@ class RecruitModel extends Halo_Model
         $result = $this->web_slave->getRowByCondition('recruits',HaloPdo::condition('id= ?',$id));
         return $result;
     }
+
+    public function saveSort($data)
+    {
+        return $this->web->batchUpdateData('recruits',array_keys($data[0]),$data,'sort_num= values(sort_num)');
+    }
+
 
 }
 

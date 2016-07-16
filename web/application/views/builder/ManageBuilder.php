@@ -56,6 +56,14 @@ class ManageBuilder
                     <td>{$salary}</td>
                     <td>{$time}</td>
                     <td>
+                         <a href=\"javascript:;\" class=\"btn default green js_up\">
+                            <i class=\"fa fa-arrow-up\"></i>
+                        </a>
+                        <a href=\"javascript:;\" class=\"btn default  js_down\">
+                            <i class=\"fa fa-arrow-down\"></i>
+                        </a>
+                    </td>
+                    <td>
                         <a href='javascript:;' class='btn default btn-sm blue js_edit'>
                             <i class='fa fa-edit'></i> 
                             编辑 
@@ -106,6 +114,14 @@ class ManageBuilder
                 <tr  data-info='{$info}' data-id='{$id}'>
                     <td>{$title}</td>
                     <td>{$time}</td>
+                    <td>
+                         <a href=\"javascript:;\" class=\"btn default green js_up\">
+                            <i class=\"fa fa-arrow-up\"></i>
+                        </a>
+                        <a href=\"javascript:;\" class=\"btn default  js_down\">
+                            <i class=\"fa fa-arrow-down\"></i>
+                        </a>
+                    </td>
                     <td>
                         <a href='javascript:;' class='btn default btn-sm blue js_edit'>
                             <i class='fa fa-edit'></i> 

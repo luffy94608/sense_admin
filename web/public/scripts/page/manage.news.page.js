@@ -140,6 +140,61 @@ $(document).ready(function(){
                 }});
             });
 
+            /**
+             * 上升 下降
+             */
+            $(document).on('click','.js_up,.js_down',function () {
+                var $this=$(this);
+                var $parent=$($this.parents('.js_modal_param')[0]);
+                if($parent.length == 0){
+                    $parent=$($this.parents('tr'));
+                }
+                var target;
+
+                if($this.hasClass('js_up')){
+                    target = $parent.prev()[0];
+                }else{
+                    target = $parent.next()[0];
+                }
+                if(!target){
+                    return false;
+                }
+                if($this.hasClass('js_up')){
+                    $(target).before($parent);
+                }else{
+                    $(target).after($parent);
+                }
+            });
+
+            /**
+             * 保存排序
+             */
+            $(document).on('click','.js_sort_save',function () {
+                var trNodes = $('.js_table_list tr');
+
+                var params = [];
+                for (var i=0;i<trNodes.length;i++){
+                    var tmpNode = $(trNodes[i]);
+                    var tmpId = tmpNode.data('id');
+                    if(tmpId)
+                    {
+                        var tmpData = {
+                            id:tmpId,
+                            sort_num:i+1,
+                        };
+                        params.push(tmpData);
+                    }
+
+                }
+                if(params.length<1){
+                    $.showToast('无可排序的数据',false);
+                    return false;
+                }
+                $.wpost('/manage/save-news-sort-ajax',{params:params},function(){
+                    $.showToast('保存成功',true);
+                });
+            });
+
         },
         run:function () {
             init.initDatePickerEvent();

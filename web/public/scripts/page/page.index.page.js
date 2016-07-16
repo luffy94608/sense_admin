@@ -15,9 +15,12 @@ $(document).ready(function(){
         typeSolutionSection : "#js_show_type_solution",
         typeListSection : "#js_show_type_list",
         typeHeadSection : "#js_show_type_head",
+        typeExtraImgSection : "#js_show_extra_img_section",
 
         bannerPreview : $('#js_modal_banner_preview'),
         inputBanner : $('#js_modal_banner'),
+        inputExtraImgPreview : $('.js_show_extra_img_preview'),
+        inputExtraImg : $('.js_show_extra_img'),
         inputName : $('#js_modal_name'),
         inputType : $('#js_modal_type'),
         inputDownload : $('#js_modal_download'),
@@ -85,6 +88,8 @@ $(document).ready(function(){
                     $(init.typeListSection).removeClass('gone');
                     break;
                 case 17:
+                    $('.js_modal_item_img_section').addClass('gone');
+                    $(init.typeExtraImgSection).removeClass('gone');
                     $(init.typeListSection).removeClass('gone');
                     break;
             }
@@ -183,6 +188,7 @@ $(document).ready(function(){
         setModalParamsData : function (data) {
             if(data)
             {
+                var host = document.global_config_data.img_host;
                 data.forEach(function (value) {
                     var node = init.paramsCloneNode.clone();
                     var tmpObj = $(node).find('input');
@@ -193,6 +199,9 @@ $(document).ready(function(){
                     tmpObj.eq(1).val(value.title);
                     tmpObj.eq(2).val(value.sub_title);
                     tmpObj.eq(3).val(value.pic);
+                    if(value.pic && value.pic.length){
+                        $(node).find('.js_modal_item_img_preview').attr('src',host + value.pic).removeClass('gone')
+                    }
                     tmpSelectObj.val(value.position);
                     tmpTextAreObj.val(value.content);
                     if(value.links){
@@ -246,6 +255,9 @@ $(document).ready(function(){
                     $('.js_modal_item_img_section').addClass('gone');
                 case 16://图文分离
                 case 17://图文混合
+                    if(data.extra && data.extra.length){
+                        init.inputExtraImgPreview.attr('src',host+data.extra).removeClass('gone')
+                    }
                     if(data.contents){
                         init.setModalParamsData(data.contents);
                     }
@@ -265,7 +277,9 @@ $(document).ready(function(){
             init.inputDesc.val('');
 
             init.inputBanner.val('');
+            init.inputExtraImg.val('');
             init.bannerPreview.attr('src','').addClass('gone');
+            init.inputExtraImgPreview.attr('src','').addClass('gone')
             init.inputName.val('');
             init.inputHead.val('');
             init.inputType.val('').prop('disabled',false);
@@ -328,6 +342,7 @@ $(document).ready(function(){
                         name:$.trim(init.inputName.val()),
                         title:$.trim(init.inputTitle.val()),
                         keywords:$.trim(init.inputKeywords.val()),
+                        extraImg:$.trim(init.inputExtraImg.val()),
                         description:$.trim(init.inputDesc.val()),
                         banner:$.trim(init.inputBanner.val()),
                         page_type_id:parseInt($.trim(init.inputType.val())),
@@ -387,6 +402,7 @@ $(document).ready(function(){
                                 $.showToast('请添加列表内容',false);
                                 return false;
                             }
+                            params.extra = params.extraImg;
                             break;
                     }
 

@@ -141,7 +141,7 @@ class LockModel extends Halo_Model
         $maps  = $this->keyLockMap;
         foreach($maps as $k=>$v)
         {
-            if(array_key_exists($v,$params) && $v!==false)
+            if(array_key_exists($v,$params) && $params[$v]!==false)
             {
                 $data[$k]=$params[$v];
             }
@@ -171,11 +171,11 @@ class LockModel extends Halo_Model
         {
             $map=$this->keyLockMap;
             $data=array();
-            foreach($params as $k=>$v)
+            foreach($map as $k=>$v)
             {
-                if(array_key_exists($k,$map) && $v!==false)
+                if(array_key_exists($v,$params) && $params[$v]!==false)
                 {
-                    $data[$map[$k]]=$v;
+                    $data[$k]=$params[$v];
                 }
             }
             if($this->timestamps){

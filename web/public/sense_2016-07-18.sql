@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.5.34)
 # Database: sense
-# Generation Time: 2016-07-17 17:26:51 +0000
+# Generation Time: 2016-07-17 18:21:15 +0000
 # ************************************************************
 
 
@@ -126,6 +126,27 @@ VALUES
 
 /*!40000 ALTER TABLE `account_user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table apply
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `apply`;
+
+CREATE TABLE `apply` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `email` varchar(100) NOT NULL DEFAULT '',
+  `mobile` varchar(20) NOT NULL DEFAULT '',
+  `company` varchar(100) NOT NULL DEFAULT '',
+  `commodity` varchar(50) NOT NULL DEFAULT '',
+  `type` varchar(50) NOT NULL DEFAULT '',
+  `desc` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 # Dump of table banners
@@ -413,6 +434,23 @@ VALUES
 UNLOCK TABLES;
 
 
+# Dump of table feedback
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `feedback`;
+
+CREATE TABLE `feedback` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `email` varchar(100) NOT NULL DEFAULT '',
+  `content` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table jobs
 # ------------------------------------------------------------
 
@@ -698,7 +736,8 @@ VALUES
 	(81,'管理行业','',21,0,1,0,'_self',79,2,0),
 	(82,'建筑行业','',22,0,1,0,'_self',79,3,0),
 	(83,'教育和文档','',23,0,1,0,'_self',79,4,0),
-	(84,'通用行业','',24,0,1,0,'_self',79,5,0);
+	(84,'通用行业','',24,0,1,0,'_self',79,5,0),
+	(85,'试用及购买','/lock-detail/2?mid=42&tab=2',0,0,0,0,'_self',41,4,1);
 
 /*!40000 ALTER TABLE `menus` ENABLE KEYS */;
 UNLOCK TABLES;

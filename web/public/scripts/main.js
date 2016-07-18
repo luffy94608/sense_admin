@@ -6,7 +6,7 @@
 
     requirejs.config({
 
-        baseUrl: configData.resource_root + '/scripts/',
+        baseUrl: configData.resource_root + '/release/',
         urlArgs: 'v=' + version,
         waitSeconds: 0,
         paths: {

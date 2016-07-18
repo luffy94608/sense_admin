@@ -1,0 +1,1059 @@
+(function($){
+	
+	$.log = function(v){
+		console.log(v);
+	}
+	
+	$.fn.wclick = function(callback){ 
+		$(this).click(function(e){ 
+			if(false === callback.call(this, e))
+				e.preventDefault();
+		});
+	};
+
+	$.showLoading = function(){
+		$.fancybox.showActivity();
+	};
+	$.hideLoading = function(){
+		$.fancybox.hideActivity();
+	};
+	
+	$.showToast = function(text,life){
+		$.jGrowl(text, {life:800});
+	};
+	$.showError = function(title,text){
+		var content = "<span style='color:red;font-size:16px;'>"+text+"</span>";
+		$.jGrowl(content, {header:title,life:2000});
+	};
+
+    $.showLogin = function(){
+        var loginDialog = $('#login_dialog').dialog( {modal:true,
+            title:'请登录',
+            buttons: {
+            "登录": function () {
+                var account = loginDialog.find('#account').val();
+                var password = loginDialog.find('#password').val();
+
+                if (account.length == 0){
+                    $.showToast('请输入登录邮箱！');
+                    return;
+                }
+                if (password.length == 0){
+                    $.showToast('请输入密码！');
+                    return;
+                }
+
+                var loginData = {email:account,pwd:$.md5(password)};
+
+                if (loginDialog.find('#verify_div').is(':visible')){
+                    loginData.verify = loginDialog.find('#verify').val();
+                    if (loginData.verify.length == 0){
+                        $.showToast('请输入验证码！');
+                        return;
+                    }
+                }
+
+                $.wpost('/account/login', loginData, function(data){
+                    $('#login_dialog').dialog('close');
+                    $.showToast('登录成功！');
+                }, function(data){
+                    if (parseInt(data.code) == -3){
+                        loginDialog.find('#verify_div').show();
+                    }
+
+                    $.showToast(data.desc);
+                });
+            }
+        }});
+
+        loginDialog.find('#verify_div').hide();
+        loginDialog.find('#password').val('');
+    };
+
+    $.showConfirmDialog = function(opts){
+        var st = {
+          content:'',
+          yes:function(){},
+          no:function(){},
+          title:'确认操作',
+          positive:'确认',
+          negative:'取消'
+        };
+
+        $.extend(st, opts);
+
+        var buttons = {};
+
+        buttons[st.positive] = function () {
+            st.yes();
+            $(this).dialog('close');
+        };
+        buttons[st.negative] = function () {
+            st.no();
+            $(this).dialog('close');
+        };
+
+        var confirmDialog = $('#global_confirm_dialog').dialog( {modal:true,title:st.title,buttons: buttons});
+        confirmDialog.find('#confirm_content').text(st.content);
+    };
+
+    $.showInputDialog = function(opts){
+        var st = {
+          title:'',
+          placeholder:'',
+          commit:null
+        };
+
+        $.extend(st, opts);
+
+        var inputDialog;
+        var buttons = {};
+
+        buttons['确认'] = function () {
+            st.commit(inputDialog.find('input').val());
+            $(this).dialog('close');
+        };
+        buttons['取消'] = function () {
+            $(this).dialog('close');
+        };
+
+        inputDialog = $('#global_input_dialog').dialog( {modal:true,title:st.title,buttons: buttons});
+        inputDialog.find('input').attr('placeholder',st.placeholder).val('');
+    };
+
+    $.fn.WProgressBar = function(opts){
+        var st = {
+            queryProgress:null,
+            onFinish:null,
+            interval:500,
+            delay:10
+        };
+
+        $.extend(st, opts);
+
+        var $this = $(this);
+
+        var progressText = $this.find('#progress_text');
+        var progressBar = $this.find('#progress_bar').progressbar();
+
+        var eInterval = null;
+        $this.updateProgress = function(current,total){
+            if (current == 0 && total == 0){
+                progressText.text('getting ready...');
+            } else if (current == 1 && total == 1){
+                clearInterval(eInterval);
+                progressText.text('successful completed!');
+                progressBar.progressbar('option', 'value', 100);
+                setTimeout(function(){
+                    if ($.isFunction(st.onFinish)){
+                        st.onFinish();
+                    }
+                }, 1000);
+            } else {
+                var percent = parseInt(current) * 100 / parseInt(total);
+                progressBar.progressbar('option', 'value', percent);
+                progressText.text(current + '/' +total);
+            }
+        };
+
+        $this.stopProgress = function(){
+            if (eInterval){
+                clearInterval(eInterval);
+            }
+        };
+
+        var startProgressing = function(){
+            eInterval = setInterval(function(){
+                if ($.isFunction(st.queryProgress)){
+                    st.queryProgress(function(data){
+                        $this.updateProgress(data.current, data.total);
+                    });
+                }
+            }, st.interval);
+        };
+
+        setTimeout(function(){
+             startProgressing();
+        }, st.delay);
+
+        return $this;
+    };
+
+    $.wpost = function(url, data, callback,failback,withoutLoading){
+
+        if (!$.isFunction(failback)){
+            withoutLoading = failback;
+        }
+
+        if(data == null)
+            data = {};
+        data.request_type = 'ajax';
+
+        if (!withoutLoading){
+            $.showLoading();
+        }
+
+        $.log(">>>>>>>>>>>>>"+url+">>>>>>>>>>>>>>>");
+        $.log(data);
+        jQuery.ajax({type: 'post',url: url,data: data,
+            success: function(res){
+                if (!withoutLoading){
+                    $.hideLoading();
+                }
+                $.log(res);
+                if(res.code == 0){
+                    if (res.data && res.data.base64)
+                        res.data.html = strdecode(res.data.html);
+                    if($.isFunction(callback))
+                        callback(res.data);
+                }else{
+                    if (parseInt(res.code) == -999){
+                        $.showLogin();
+                        return;
+                    }
+                    if($.isFunction(failback))
+                        failback(res);
+                    else
+                        $.showError(url, res.desc);
+                }
+            },
+            error:function(request, textStatus, err){
+                if (textStatus){
+                    var extra = textStatus + '<br>status:'+ request.status + ' ' + request.statusText + '<br>';
+                    $.showError(url, extra);
+                } else {
+                    $.showError(url, err.description);
+                }
+                if (!withoutLoading){
+                    $.hideLoading();
+                }
+            },
+            dataType: 'json'});
+    };
+
+    $.fn.initAuditItemOperation = function(){
+        var item = $(this);
+
+//        item.mouseenter(function(){
+//            item.find('.operation').show();
+//        }).mouseleave(function(){
+//                if (parseInt(item.attr('rejected')) == 0){
+//                    item.find('.operation').hide();
+//                }
+//            });
+
+        item.find('#delete').unbind().wclick(function(){
+            var rejected = parseInt(item.attr('rejected'));
+
+            if (rejected){
+                item.attr('rejected','0');
+                item.find('.operation').find('.selector').hide();
+            } else {
+                item.attr('rejected','1');
+                item.find('.operation').find('.selector').show();
+            }
+
+            return false;
+        });
+    };
+
+    $.fn.getAuditData = function(){
+        var passIds = [],rejectIds = [],dealTypes = [];
+        $(this).find('.content_area .item_area').each(function(){
+            var item = $(this);
+            var id = item.attr('content_id');
+            if (parseInt(item.attr('rejected')) == 0){
+                passIds.push(id);
+            } else {
+                rejectIds.push(id);
+                var typeSelector = item.find('.operation select');
+                dealTypes.push(typeSelector.val());
+            }
+        });
+
+        return {pass:passIds.join(),reject:rejectIds.join(),deal:dealTypes.join()};
+    };
+
+    $.fn.AuditCommitButton = function(opts){
+        var st = {
+            url:'/audit/do-audit',
+            getAuditData :function(){return {};},
+            onSuccess:function(data){}
+        };
+
+        st = $.extend(st, opts);
+
+        var btn = $(this);
+        btn.unbind().wclick(function(){
+            btn.button('loading');
+            $.wpost(st.url, st.getAuditData(), function(data){
+                st.onSuccess(data);
+                btn.button('reset');
+                $.showToast('审核成功！');
+            });
+            return false;
+        });
+        return btn;
+    };
+
+    $.fn.initCheckBoxOperation = function(){
+        var $this = $(this);
+
+        var targetList = $this.parent().find('#list');
+        $this.find('#commit_div_check_box').change(function(){
+            if ($(this).is(':checked')){
+                targetList.find('input[type=checkbox]').attr('checked','checked').change().parent().addClass('checked');
+            } else {
+                targetList.find('input[type=checkbox]').removeAttr('checked').change().parent().removeClass();
+            }
+
+        });
+        $this.listUpdated = function(){
+            targetList.find('input[type=checkbox]').change(function(){
+                if (targetList.find('input[type=checkbox]:checked').length ==
+                    targetList.find('input[type=checkbox]').length){
+                    $this.find('#commit_div_check_box').attr('checked','checked').parent().addClass('checked');
+                } else {
+                    $this.find('#commit_div_check_box').removeAttr('checked').parent().removeClass();
+                }
+
+                var row = $(this).parents('tr');
+                if ($(this).is(':checked')){
+                    row.addClass('thisRow');
+                } else {
+                    if (row.hasClass('thisRow')){
+                        row.removeClass('thisRow');
+                    }
+                }
+            });
+
+            $this.find('#commit_div_check_box').removeAttr('checked').parent().removeClass();
+        };
+
+        return $this;
+    }
+
+
+    $.fn.AuditCommitDiv = function(opts){
+        var st = {
+            type:'',
+            state:'',
+            pager:null,
+            tab:null,
+            parentId:null
+        };
+        $.extend(st, opts);
+
+        var $this = $(this);
+        var targetList = $this.parents('#'+st.parentId).find('#list');
+
+        $this.listUpdated = function(){
+            targetList.find('.warn_selector').change(function(){
+                var item = $(this);
+                var parentTr = item.parents('tr');
+
+                if (parseInt(item.val()) != 0){
+                    parentTr.addClass('thisRow');
+                } else {
+                    if (parentTr.hasClass('thisRow')){
+                        parentTr.removeClass('thisRow');
+                    }
+                }
+
+                if (targetList.find('.thisRow').length == 0){
+                    $this.find('button[reject_val]').hide();
+                    $this.find('#pass_all').show();
+                } else {
+                    $this.find('button[reject_val]').show();
+                    $this.find('#pass_all').hide();
+                }
+            }).change();
+        };
+
+        var ensureData = function(){
+            var ids = [],warnTypes=[];
+            targetList.find('tr.thisRow').each(function(){
+                var item = $(this);
+                ids.push(item.attr('audit_id'));
+                var waryType = item.find('#warn_type').val();
+                warnTypes.push(waryType);
+            });
+
+            return {ids:ids.join(),warn:warnTypes.join(),type:st.type};
+        }
+
+        var autoLoadingMore = function(){
+            targetList.find('tr.thisRow').remove();
+            if (targetList.find('.audit_row').length == 0){
+                if (st.pager){
+                    st.pager.updateList(0);
+                } else if (st.tab) {
+                    st.tab.setTabIndex(st.tab.currentIdx());
+                }
+            } else {
+                $this.find('button[reject_val]').hide();
+                $this.find('#pass_all').show();
+            }
+        };
+
+        $this.find('button[reject_val]').unbind().wclick(function(){
+            var btn = $(this);
+            var data = ensureData();
+            data.deal = parseInt(btn.attr('reject_val'));
+            var text = btn.text();
+
+            var confirmCommit = function(){
+                $.showConfirmDialog({
+                    title:'提交确认',
+                    content:'确认提交审核？',
+                    positive:text,
+                    yes:function(){
+                        btn.button('loading');
+                        $.wpost('/audit/reject',data,function(data){
+                            autoLoadingMore();
+                            btn.button('reset');
+                        });
+                    }
+                });
+            };
+
+            if (data.deal == 8){ // 提醒
+                var msgDialog = $('#global_text_dialog').dialog({
+                    title:'提醒内容',
+                    modal:true,
+                    width:400,
+                    buttons:{
+                        '确定':function(){
+                            data.content = msgDialog.find('textarea').val();
+                            confirmCommit();
+                            $(this).dialog('close');
+                         },
+                        '取消':function(){
+                            $(this).dialog('close');
+                        }
+                    }
+                });
+            } else {
+                confirmCommit();
+            }
+        });
+
+        $this.find('#pass_all').unbind().wclick(function(){
+            var ids = [];
+            targetList.find('tr.audit_row').each(function(){
+                ids.push($(this).attr('audit_id'));
+                $(this).addClass('thisRow');
+            });
+            var btn = $(this);
+            btn.button('loading');
+            $.wpost('/audit/pass',{ids:ids.join(),type:st.type},function(data){
+                autoLoadingMore();
+                btn.button('reset');
+            });
+        });
+
+        return $this;
+    };
+
+    $.fn.ReportCommitDiv = function(opts){
+        var st = {
+            type:'',
+            state:'',
+            pager:null,
+            tab:null,
+            parentId:null
+        };
+        $.extend(st, opts);
+
+        var $this = $(this).initCheckBoxOperation();
+
+        var targetList = $this.parents('#'+st.parentId).find('#list');
+        $this.ensureData = function(){
+            if (targetList.find('tr.thisRow').length == 0){
+                $.showToast('至少选择一条数据进行操作！');
+                return false;
+            }
+
+            var ids = [];
+            targetList.find('tr.thisRow').each(function(){
+                var item = $(this);
+                ids.push(item.attr('report_id'));
+            });
+
+            return {ids:ids.join(),type:st.type};
+        }
+
+        var autoLoadingMore = function(){
+            targetList.find('tr.thisRow').remove();
+            if (targetList.find('.report_row').length == 0){
+                if (st.pager){
+                    st.pager.updateList(0);
+                } else if (st.tab) {
+                    st.tab.setTabIndex(st.tab.currentIdx());
+                }
+            }
+        };
+
+        $this.dealReports = function(btn,resolveType,day){
+            var data = $this.ensureData();
+            data.resolve = resolveType;
+            data.day = day;
+            if (data){
+                btn.button('loading');
+                $.wpost('/audit/deal-report',data,function(){
+                    btn.button('reset');
+                    autoLoadingMore();
+                });
+            }
+        };
+
+        // //1忽略 2: 删除 3：警告 4：删除并警告
+        $this.find('button[reject_val]').unbind().wclick(function(){
+            var resolveType = $(this).attr('reject_val');
+            $this.dealReports($(this),resolveType);
+        });
+        $this.find('#ignore').unbind().wclick(function(){
+            $this.dealReports($(this),1);
+            return false;
+        });
+
+        return $this;
+    };
+
+    $.fn.initHotOperation = function(opts){
+        var st = {
+          onDelete:null,
+          onOrder:null,
+          onUnlock:null,
+          onRecovery:null
+        };
+
+        $.extend(st, opts);
+
+        var $this = $(this);
+        $this.find('#delete').unbind().wclick(function(){
+            $.showConfirmDialog({
+                positive:'删除',
+                content:'确认从热门移除?',
+                yes:function(){
+                    st.onDelete();
+                }
+            });
+            return false;
+        });
+        $this.find('#order').unbind().wclick(function(){
+//            $.showInputDialog({title:'请输入新序号',placeholder:'新序号',commit:function(value){
+//                st.onOrder(value);
+//            }});
+
+             var input = $(this).prev();
+            var newOrder = $.trim(input.val());
+
+            if (newOrder.length == 0){
+                $.showToast('请输入序号！');
+                return false;
+            }
+
+            st.onOrder(newOrder);
+
+            return false;
+        });
+        $this.find('#unlock').unbind().wclick(function(){
+            st.onUnlock();
+            return false;
+        });
+        $this.find('#recovery').unbind().wclick(function(){
+            st.onRecovery();
+            return false;
+        });
+    };
+
+    $.fn.initHotUserItemOperation = function(delCallback, toTopCallback){
+        var item = $(this);
+
+//        item.mouseenter(function(){
+//            item.find('.operation').show();
+//        }).mouseleave(function(){
+//                item.find('.operation').hide();
+//                item.find('.selector').hide();
+//            });
+
+        item.find('#delete').unbind().wclick(function(){
+            if (item.find('.operation').find('.selector').length > 0){
+                item.find('.operation').find('.selector').show();
+            } else {
+                if ($.isFunction(delCallback)){
+                    delCallback();
+                }
+            }
+            return false;
+        });
+
+        item.find('.operation').find('select').change(function(){
+            var selected = $(this).val();
+            if (selected != 0){
+                // remove
+                if ($.isFunction(delCallback)){
+                    delCallback(item.attr('uid'), selected);
+                }
+            }
+        });
+
+        item.find('.operation').find('#toTop').unbind().wclick(function(){
+            // to top
+            if ($.isFunction(toTopCallback)){
+                toTopCallback(item.attr('uid'));
+            }
+            return false;
+        });
+
+        item.find('.operation').find('#recovery').unbind().wclick(function(){
+            // to top
+            if ($.isFunction(delCallback)){
+                delCallback(item.attr('uid'));
+            }
+            return false;
+        });
+    };
+
+    $.selectIndustry = function(industries,callback){
+       var industryDialog =  $('#global_industry_dialog').dialog({
+            modal:true,
+            title:'选择行业',
+            width:'1200px',
+            buttons: {
+                "确认": function () {
+                    var selectIds = [],selectNames = [];
+                    industryDialog.find('input[type=checkbox]:checked').each(function(){
+                        var checkId = $(this).attr('id');
+                        var indId = checkId.split('_')[1];
+                        var indName = industryDialog.find('label[for='+checkId+']').text();
+                        selectIds.push(indId);
+                        selectNames.push(indName);
+                    });
+
+                    if ($.isFunction(callback)){
+                        callback({ids:selectIds,names:selectNames});
+                    }
+
+                    $('#global_industry_dialog').dialog('close');
+                },
+                "取消": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        industryDialog.find('input[type=checkbox]').removeAttr('checked').parent().removeClass();
+        if (industries && industries.length > 0){
+            for(var i in industries){
+                var checkbox = industryDialog.find('#checkbox_'+industries[i]);
+                checkbox.attr('checked','checked').parent().addClass('checked');
+            }
+        }
+    };
+
+    $.fn.uploadImage = function(action,data,func){
+        $(this).next('input[type="file"]').remove();
+        var input = $(' <input style="display:none;" type="file" name="file"/>');
+        var _this = $(this);
+        input.change(function(){
+            if(/image/i.test(this.files[0].type)){
+                var xhr = new XMLHttpRequest();
+                _this.data("_sid",'_sid_'+Math.random());
+                var p = _this.position();
+                var _show = $('div></div>').css({"postion":"absolute",'top' : p.top,'left' : p.left,'opacity' : '0.5',"background-color" : '#CCC','-webkit-border-radius':"5px","padding":"5px",'z-index':_this.zIndex + 1}).attr("id",_this.data('_sid'));
+                xhr.upload.onprogress = function(e) {
+                    var ratio = e.loaded / e.total;
+                    $("#" + _this.data("_sid")).html(ratio*100 + "%");
+                }
+                xhr.onload = function(){
+                    if(this.status  == 200){
+                        if(func){
+                            func($.parseJSON(this.responseText).data);
+                        }
+                    }
+                    $("#" + _this.data("_sid")).remove();
+                }
+                xhr.open("POST", action, true);
+                var fd = new FormData();
+                fd.append('image',this.files[0]);
+
+                if (data){
+                    for(var i in data){
+                        fd.append(i, data[i]);
+                    }
+                }
+
+                xhr.send(fd);
+            }else{
+                alert('请选择图片');
+                $(this).click();
+            }
+        });
+        $(this).after(input);
+        input.click();
+    };
+
+    $.punishUser = function(opts){
+        var st = {
+            uid:null,
+            onSuccess:null
+        };
+        $.extend(st, opts);
+
+        var punishDialog = $('#punish_user_dilaog').dialog({
+            modal:true,
+            title:'封禁用户',
+            buttons: {
+                "封禁": function () {
+                    var data = {};
+                    data.obj_uid = st.uid;
+                    data.type = punishDialog.find('#punish_type').val();
+                    data.day = parseInt(punishDialog.find('#punish_day').val());
+
+                    if (data.obj_uid){
+                        $.wpost('/audit/punish', data, function(data){
+                            if ($.isFunction(st.onSuccess)){
+                                $.showToast('封禁成功！');
+                                st.onSuccess();
+                            }
+                            $('#punish_user_dilaog').dialog('close');
+                        });
+                    } else {
+                        st.onSuccess(data);
+                        $('#punish_user_dilaog').dialog('close');
+                    }
+                },
+                "取消": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        punishDialog.find('#punish_type').val(0).change();
+        punishDialog.find('#punish_day').val(3);
+        punishDialog.find('#user_content').empty();
+
+        if (st.uid){
+            $.wpost('/audit/get-user', {uid:st.uid}, function(data){
+                punishDialog.find('#user_content').html(data.html);
+            }, true);
+        }
+    };
+
+    $.showCompanyDetail = function(companyid, invoker){
+        $.wpost('/company/detail', {id:companyid}, function(data){
+            $('#global_company_editor').remove();
+            invoker.hide().before(data.html);
+            var editor = $('#global_company_editor');
+            require(['jq-tagsinput'], function(){
+                editor.find('#keywords').tagsInput({
+                    defaultText:'添加关键词',
+                    onChange:function(){
+
+                    }
+                });
+            });
+
+            var industries = data.industry;
+            var indIds = [],names = [];
+            for (var i in industries){
+                indIds.push(industries[i].id);
+                names.push(industries[i].name);
+            }
+
+            editor.find('#industry_display').text(names.join('、'));
+            editor.find('#edit_industry').unbind().wclick(function(){
+                $.selectIndustry(indIds, function(selects){
+                    editor.find('#industry_display').text(selects.names.join('、'));
+
+
+                });
+            });
+
+        });
+    };
+
+    $.addCompany = function(args, callback){
+        var industries = [];
+        var addDialog = $('#new_company_dialog').dialog({
+            modal:true,
+            title:'新建公司',
+            buttons: {
+                "保存": function () {
+                    var obj = {};
+                    obj.keywords =  addDialog.find('#keywords').val();
+                    obj.name = $.trim(addDialog.find('#name').val());
+                    obj.industry = industries.join();
+
+                    if (obj.name.length == 0 || obj.industry.length == 0){
+                        $.showToast('请完善信息后再保存！');
+                        return;
+                    }
+
+                    $.wpost('/company/new-company', obj, function(data){
+                        $('#new_company_dialog').dialog('close');
+                        if ($.isFunction(callback)){
+                            obj.id = data.id;
+                            callback(obj);
+
+                            window.open('/company/'+obj.id, '_blank');
+                        }
+                    });
+                },
+                "取消": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        addDialog.find('#name').val(args.name);
+        addDialog.find('#edit_industry').unbind().wclick(function(){
+            $.selectIndustry(industries, function(selects){
+                industries = selects.ids;
+                addDialog.find('#industry_display').text(selects.names.join('、') + ' 共'+industries.length + '个行业');
+            });
+            return false;
+        });
+
+        addDialog.find('#industry_display').text('');
+        addDialog.find('#keywords').show().val('');
+        addDialog.find('#keywords_tagsinput').remove();
+        require(['jq-tagsinput'], function(){
+            addDialog.find('#keywords').tagsInput({
+                defaultText:'添加关键词'
+            });
+        });
+    };
+
+	$('.content_area .item_area div.show_tips').tipsy({
+		gravity: $.fn.tipsy.autoNS,
+		fade: true, 
+		html:true,
+		live:true,
+		title:function(){
+			return $(this).html();
+		}
+	});
+
+    $.fn.LocationSelector = function(opts) {
+        var st = {
+                url : "/search/loc",
+                parentId : "province",
+                childId  : "city",
+                parentChanged: null,
+                childChanged: null,
+                initialized:null
+            },
+            $this = $(this);
+        $.extend(st, opts);
+
+        $this.parent = $this.find("#" + st.parentId);
+        $this.child  = $this.find("#" + st.childId);
+
+        $this._changeLoc = function(parentCode, childCode) {
+            $.FillSelect($this.child, {});
+            if(parentCode != 0){
+                $.wpost(st.url, {
+                    'province' : parentCode
+                }, function(data) {
+//                    $.log('************data*****************');
+//                    $.log(data);
+                    $.FillSelect($this.child, data);
+                    if(childCode != 0) {
+                        $this.child.val(childCode).change();
+                    }else{
+                        $this.child.val(childCode).change();
+                    }
+                }, true);
+            }
+//            else{
+//                var $displayNameSpan = $this.find('#uniform-city span');
+//                $displayNameSpan.empty().text('请选择');
+//            }
+        };
+
+
+        $this.setLoc = function(parentCode, childCode) {
+            if(parentCode == $this.parent.val()) {
+
+                $this.child.val(childCode).change();
+            } else {
+                $this.parent.val(parentCode).change();
+                $this._changeLoc(parentCode, childCode);
+            }
+        };
+
+        $this.parent.change(function() {
+            $this._changeLoc($(this).val(), 0);
+            if($.isFunction(st.parentChanged))
+                st.parentChanged($(this).val(), $this.child);
+        });
+        $this.child.change(function() {
+            if($.isFunction(st.childChanged))
+                st.childChanged($(this).val());
+        });
+
+        $.wpost(st.url, {'province' : 0}, function(data) {
+            $.FillSelect($this.parent, data);
+            if ($.isFunction(st.initialized)){
+                st.initialized();
+            }
+        },true);
+
+        return $this;
+    };
+
+    $.bindAuditOperations = function(){
+        $('.hover_dispay_item a').live('click',function(e){
+            e.preventDefault();
+
+            var link = $(this);
+            var id = link.attr('audit_id');
+            var type = link.attr('audit_type');
+            var parent = link.attr('parent_class');
+
+            $.doAudit({
+                id:id,
+                type:type,
+                onSuccess:function(){
+                    if (parent){
+                        link.parents('.'+parent).remove();
+                    }
+                }
+            });
+        });
+    };
+
+    $.doAudit = function(opts){
+        var st = {
+            type:null,
+            id:null,
+            onSuccess:null
+        };
+        $.extend(st, opts);
+
+        var auditDialog = $('#global_audit_dialog').dialog({
+            modal:true,
+            width:400,
+            title:'审核'
+        });
+
+        auditDialog.find('#warn_type').val(1).change();
+
+        auditDialog.find('button[reject_val]').unbind().wclick(function(){
+            var btn = $(this);
+            var warnType = auditDialog.find('#warn_type').val();
+            var data = {ids:st.id,warn:warnType,type:st.type};
+            data.deal = parseInt(btn.attr('reject_val'));
+            var text = btn.text();
+
+            var confirmCommit = function(){
+                btn.button('loading');
+                $.wpost('/audit/reject',data,function(data){
+                    $('#global_audit_dialog').dialog('close');
+                    $.showToast('审核成功！');
+                    btn.button('reset');
+
+                    if ($.isFunction(st.onSuccess)){
+                        st.onSuccess();
+                    }
+                });
+            };
+
+            if (data.deal == 8) {
+                var msgDialog = $('#global_text_dialog').dialog({
+                    title:'提醒内容',
+                    modal:true,
+                    width:400,
+                    buttons:{
+                        '确定':function(){
+                            data.content = msgDialog.find('textarea').val();
+                            confirmCommit();
+                            $(this).dialog('close');
+                        },
+                        '取消':function(){
+                            $(this).dialog('close');
+                        }
+                    }
+                });
+            } else {
+                confirmCommit();
+            }
+        });
+    };
+
+    $.fn.OperationPanel = function(opts){
+        var st = {
+            id:null,
+            type:null
+        };
+        $.extend(st,opts);
+
+        var operationPanel = $(this);
+
+        operationPanel.find('#audit').unbind().wclick(function(){
+            $.doAudit({id:st.id,type:st.type,onSuccess:function(){
+                location.reload();
+            }});
+            return false;
+        });
+
+        operationPanel.find('#set_hot').unbind().wclick(function(){
+            $.wpost('/operation/put-to-top',{id:st.id,type:st.type},function(){
+                location.reload();
+            });
+        });
+        operationPanel.find('#cancel_hot').unbind().wclick(function(){
+            $.showConfirmDialog({
+                title:'确认',
+                content:'确认停止推荐？',
+                positive:'停止',
+                yes:function(){
+                    $.wpost('/operation/put-to-last',{id:st.id,type:st.type},function(){
+                        location.reload();
+                    });
+                }
+            });
+        });
+        operationPanel.find('#forbid_hot').unbind().wclick(function(){
+            $.wpost('/operation/set-hot-able',{id:st.id,type:st.type,able:0},function(){
+                location.reload();
+            });
+        });
+        operationPanel.find('#hot_able').unbind().wclick(function(){
+            $.wpost('/operation/set-hot-able',{id:st.id,type:st.type,able:1},function(){
+                location.reload();
+            });
+        });
+
+        return operationPanel;
+    };
+
+    Date.prototype.Format = function(fmt){ //author: meizz
+        var o = {
+            "M+" : this.getMonth()+1,                 //月份
+            "d+" : this.getDate(),                    //日
+            "h+" : this.getHours(),                   //小时
+            "m+" : this.getMinutes(),                 //分
+            "s+" : this.getSeconds(),                 //秒
+            "q+" : Math.floor((this.getMonth()+3)/3), //季度
+            "S"  : this.getMilliseconds()             //毫秒
+        };
+        if(/(y+)/.test(fmt))
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+        for(var k in o)
+            if(new RegExp("("+ k +")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        return fmt;
+    };
+
+//	$('.identity_text').tipsy({
+//		gravity: $.fn.tipsy.autoNS,
+//		fade: true,
+//		live:true,
+//		title:'data-title'
+//	});
+	
+})(jQuery);

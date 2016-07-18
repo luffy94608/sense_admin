@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.5.34)
 # Database: sense
-# Generation Time: 2016-07-17 18:21:15 +0000
+# Generation Time: 2016-07-18 03:43:45 +0000
 # ************************************************************
 
 
@@ -64,7 +64,10 @@ VALUES
 	(92,'route','成长历程',88),
 	(93,'cert','资质和产权',88),
 	(94,'recruit','招聘配置',88),
-	(95,'news','新闻配置',88);
+	(95,'news','新闻配置',88),
+	(96,'feedback','试用及购买',0),
+	(97,'feedback','意见反馈',96),
+	(98,'apply','申请试用',96);
 
 /*!40000 ALTER TABLE `account_privilege` ENABLE KEYS */;
 UNLOCK TABLES;

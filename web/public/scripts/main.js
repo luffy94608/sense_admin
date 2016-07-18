@@ -70,6 +70,8 @@
             'home-banner-page': 'page/home.banner.page',
             'home-list-page': 'page/home.list.page',
             'home-partner-page': 'page/home.partner.page',
+            'feedback-feedback-page': 'page/feedback.feedback.page',
+            'feedback-apply-page': 'page/feedback.apply.page',
 
         },
         // Use shim for plugins that does not support ADM
@@ -135,6 +137,8 @@
             'home-banner-page':['base'],
             'home-list-page':['base'],
             'home-partner-page':['base'],
+            'feedback-feedback-page':['base','date-picker'],
+            'feedback-apply-page':['base','date-picker'],
 
         }
 

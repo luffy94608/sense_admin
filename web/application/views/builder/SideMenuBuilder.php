@@ -55,6 +55,14 @@ class SideMenuBuilder
                     array('href'=>'/page/index','title'=>'单页列表'),
                 )),
             array(
+                'module'=>'feedback',
+                'title'=>'试用与反馈',
+                'icon'=>'icon-basket',
+                'children'=>array(
+                    array('href'=>'/feedback/apply','title'=>'申请试用'),
+                    array('href'=>'/feedback/feedback','title'=>'意见反馈'),
+                )),
+            array(
                 'module'=>'account',
                 'title'=>'权限管理',
                 'icon'=>'icon-user',

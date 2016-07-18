@@ -18,15 +18,12 @@ class StatisticsController extends BaseController
         parent::init();
         $this->model=new StatisticsModel();
     }
-
     /**
      * 用户平台统计
      */
     public function indexAction()
     {
         $this->view->page='statistics-index-page';
-        $this->display('maintain');
-        return false;
 
     }
 
@@ -45,28 +42,5 @@ class StatisticsController extends BaseController
         $this->inputResult($result);
     }
 
-    /**
-     * 导出excel
-     */
-    public function createFileAjaxAction()
-    {
-        $result=$this->getLegalParam('data','str');
-        $result=json_decode($result,true);
-        if(!$result)
-        {
-            $this->inputErrorWithDesc('没有可导出的数据');
-        }
-        $keyIndex=array();
-        foreach($result as $v)
-        {
-            $keyIndex[]=$v['line_code'];
-        }
-        array_multisort($keyIndex,SORT_ASC,$result);
-        $model=new ExcelModel();
-        $result=$model->createPathExcel($result);
-        $this->inputResult($result);
-    }
 
-
-    
 }

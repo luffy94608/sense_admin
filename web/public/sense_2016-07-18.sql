@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.5.34)
 # Database: sense
-# Generation Time: 2016-07-18 03:43:45 +0000
+# Generation Time: 2016-07-18 06:21:49 +0000
 # ************************************************************
 
 
@@ -312,7 +312,7 @@ LOCK TABLES `company` WRITE;
 
 INSERT INTO `company` (`Fid`, `Fname`, `Fdomain`, `Fcreated_at`, `Fupdated_at`)
 VALUES
-	(1,'深思数盾','sense.com',1458290310,1468685851);
+	(1,'深思数盾','sense.com',1458290310,1468822883);
 
 /*!40000 ALTER TABLE `company` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -385,7 +385,6 @@ VALUES
 	('1',93),
 	('1',92),
 	('1',91),
-	('1',77),
 	('1',34),
 	('1',33),
 	('1',94),
@@ -393,7 +392,9 @@ VALUES
 	('1',83),
 	('1',82),
 	('1',81),
-	('1',43);
+	('1',43),
+	('1',98),
+	('1',97);
 
 /*!40000 ALTER TABLE `company_privilege_relation` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -846,6 +847,29 @@ VALUES
 	(18,50,'免费注册云帐号','http://developer.senseshield.com/auth/register.jsp','_blank',1);
 
 /*!40000 ALTER TABLE `page_links` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table page_stats
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `page_stats`;
+
+CREATE TABLE `page_stats` (
+  `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `pv` int(11) NOT NULL,
+  `uv` int(11) NOT NULL,
+  `time` varchar(255) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `page_stats` WRITE;
+/*!40000 ALTER TABLE `page_stats` DISABLE KEYS */;
+
+INSERT INTO `page_stats` (`url`, `pv`, `uv`, `time`)
+VALUES
+	('web',100,10,'2016-07-18');
+
+/*!40000 ALTER TABLE `page_stats` ENABLE KEYS */;
 UNLOCK TABLES;
 
 

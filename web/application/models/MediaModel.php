@@ -41,7 +41,7 @@ class MediaModel
         return $hash;
     }
 
-    public function newMsgMedia($type = self::MediaTypeImg)
+    public function newMsgMedia($type = self::MediaTypeImg,$fileKey = 'image')
     {
         switch($type)
         {
@@ -93,9 +93,9 @@ class MediaModel
                 return array('res'=>false,'desc'=>'创建文件失败');
             }
         }
-        $fileArr = $_FILES['image'];
+        $fileArr = $_FILES[$fileKey];
         $sourceName=$fileArr['name'];
-        if(!in_array(strtolower($this->fileext($_FILES['image']['name'])),$type))
+        if(!in_array(strtolower($this->fileext($fileArr['name'])),$type))
         {
             $text = implode(',',$type);
             return array('res'=>false,'desc'=>'您只能上传以下类型文件'.$text,'name'=>$sourceName);

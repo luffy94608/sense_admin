@@ -40,4 +40,21 @@ class UploadController extends BaseController
         $this->inputResult($res);
 
     }
+
+    /**
+     * ck editor upload
+     */
+    public function ckEditorUploadAction()
+    {
+        $upload = new MediaModel();
+        $res = $upload->newMsgMedia(MediaModel::MediaTypeImg,'upload');
+        $host = HolloEnv::getImgHost();
+        $url = $host.$res['url'];
+        $fn = intval($_GET['CKEditorFuncNum']); //ckeditor的funID
+        $fileUrl=$url;//图片的保存地址
+        $message=$_FILES['upload']['name'];//图片名称
+        $str="<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction({$fn}, '{$fileUrl}','','{$message}');</script>";
+        exit($str);//执行script，插入图片到编辑器
+        die();
+    }
 }

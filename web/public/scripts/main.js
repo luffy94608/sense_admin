@@ -37,6 +37,8 @@
             'serial': '../assets/global/plugins/amcharts/amcharts/serial',
             'pie': '../assets/global/plugins/amcharts/amcharts/pie',
             'themes-light': '../assets/global/plugins/amcharts/amcharts/themes/light',
+            //ueditor
+            'ckeditor':'../libs/ckeditor/ckeditor',
 
             'date-picker': '../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min',
             'time-picker': '../../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker',
@@ -105,6 +107,8 @@
             'serial': ['themes-light'],
             'pie': ['themes-light'],
             'radar': ['themes-light'],
+            //ueditor
+            // 'ckeditor':['jquery'],
 
             'metronic': ['jquery-ui', 'bootstrap', 'blockui', 'dataTables-bootstrap', 'select2', 'bootstrap-modal', 'bootstrap-modalmanager'],
             'layout': ['metronic'],
@@ -129,7 +133,7 @@
             'manage-cert-page':['base'],
             'manage-cloud-page':['base'],
             'manage-solution-page':['base'],
-            'manage-news-page':['base','date-picker'],
+            'manage-news-page':['base','date-picker','ckeditor'],
             'page-index-page':['base'],
             'lock-type-page':['base'],
             'lock-download-page':['base'],

@@ -182,7 +182,7 @@ var FormValidation = function () {
             //IMPORTANT: update CKEDITOR textarea with actual content before submit
             form3.on('submit', function() {
                 for(var instanceName in CKEDITOR.instances) {
-                    CKEDITOR.instances[instanceName].updateElement();
+                    // CKEDITOR.instances[instanceName].updateElement();
                 }
             })
 

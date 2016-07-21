@@ -6,7 +6,7 @@ $(document).ready(function(){
         modal: $('#editOrAddModal'),
         listContainer: $('.js_table_list'),
         pagerObj: '',
-
+        ckEditor:'',
         inputName : $('#js_modal_name'),
         inputTime : $('#js_modal_time'),
         inputContent : $('#js_modal_content'),
@@ -33,7 +33,19 @@ $(document).ready(function(){
 
             init.inputName.val(data.title);
             init.inputTime.val(data.time);
-            init.inputContent.val(data.content);
+
+            init.ckEditor.setData(data.content);
+            // init.inputContent.val(data.content);
+            // setTimeout(function () {
+            //     init.UE.setContent(data.content);
+            // },500);
+            //
+            // init.UE.reset();
+            // setTimeout(function(){
+            //     init.UE.setContent(data.content);
+            // },200);
+
+
         },
         /**
          *清空表单
@@ -43,7 +55,20 @@ $(document).ready(function(){
             modalTitle.html(modalTitle.data('new'));
             init.inputName.val('');
             init.inputTime.val('');
-            init.inputContent.val('');
+            // init.inputContent.val('');
+
+            // if (CKEDITOR.instances['js_modal_content']) {
+            //     //CKEDITOR.remove(CKEDITOR.instances['editor']); //Does the same as line below
+            //     delete CKEDITOR.instances['js_modal_content'];
+            // }
+            if(init.ckEditor){
+                init.ckEditor.destroy('js_modal_content');
+            }
+            init.ckEditor = CKEDITOR.replace('js_modal_content',{
+                language: 'zh-cn'
+            });
+
+
         },
 
         /**
@@ -89,17 +114,19 @@ $(document).ready(function(){
                 var $parent=$this.parents('tr');
                 var id=$parent.data('id');
                 var info=$parent.data('info');
+                init.modal.modal({backdrop:'static',keyboard:false});
+
                 if(id && info){
                     init.setModalFormData(info);
                 }
 
-                init.modal.modal();
                 submitBtn.unbind().bind('click',function () {
                     var params = {
                         id:id,
                         title:$.trim(init.inputName.val()),
                         time:$.trim(init.inputTime.val()),
-                        content:$.trim(init.inputContent.val()),
+                        // content:$.trim(init.inputContent.val()),
+                        content:init.ckEditor.getData()
                     };
                     var checkMap = {
                         title:'标题',
@@ -123,6 +150,14 @@ $(document).ready(function(){
                         init.modal.modal('hide');
                     });
                 });
+            });
+
+            init.modal.on('hidden.bs.modal', function () {
+                // 关闭Dialog前移除编辑器
+                console.log('close')
+                $(this).removeData('bs.modal');
+                // init.UE.setContent('');
+                // init.UE.destroy();
             });
 
             /**
@@ -197,11 +232,16 @@ $(document).ready(function(){
 
         },
         run:function () {
+
+
+
             init.initDatePickerEvent();
             init.initPager();
+
             init.initBtnEvent();
         }
     };
 
     init.run();
+
 });

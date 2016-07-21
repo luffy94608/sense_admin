@@ -11,6 +11,7 @@ class AuthPlugin extends Yaf_Plugin_Abstract
             $exceptMap = array(
             'error'=>array(),
             'download'=>array(),
+            'upload'=>array(),
             'index'=>array(
                 'check-password' =>1,
                 'login' =>1,

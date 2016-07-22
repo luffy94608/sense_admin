@@ -18,7 +18,7 @@ class PageStatEnumModel
     {
         $transformMap = array(
 
-            self::Page                                  => "网站",
+            self::Page                                  => "总站",
 //            self::PageHome                              => "首页",
         );
 
@@ -28,6 +28,9 @@ class PageStatEnumModel
     public static function getPageTitle($key)
     {
         $transformMap = self::getTitleMap();
+        $model = new MenuModel();
+        $menu = $model->getAllMenuListMapTitle();
+        $transformMap = array_merge($transformMap,$menu);
         return $transformMap[$key];
     }
 

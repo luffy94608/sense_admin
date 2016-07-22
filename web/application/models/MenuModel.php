@@ -145,6 +145,23 @@ class MenuModel extends Halo_Model
         return $data;
     }
 
+    /**
+     * 获取所有列表数据 统计用
+     * @return array
+     */
+    public function getAllMenuListMapTitle()
+    {
+        $res = [];
+        $result = $this->web_slave->getResultsByCondition($this->tbl_name,sprintf('id>0'));
+        if($result){
+            foreach ($result as $v)
+            {
+                $res[$v['id']] = $v['name'];
+            }
+        }
+        return $res;
+    }
+
 
     /**
      * 获取类别 详情

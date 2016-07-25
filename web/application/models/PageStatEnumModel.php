@@ -30,10 +30,8 @@ class PageStatEnumModel
         $transformMap = self::getTitleMap();
         $model = new MenuModel();
         $menu = $model->getAllMenuListMapTitle();
-        $transformMap = array_merge($menu,$transformMap);
-        if($key == 74){
-            YafDebug::log($menu);
-            YafDebug::log($transformMap);
+        foreach ($menu as $k=>$v){
+            $transformMap[$k] = $v;
         }
         return $transformMap[$key];
     }

@@ -19,7 +19,7 @@ class PageStatEnumModel
         $transformMap = array(
 
             self::Page                                  => "总站",
-//            self::PageHome                              => "首页",
+            self::PageHome                              => "首页",
         );
 
         return $transformMap;

@@ -20,7 +20,6 @@ class PageStatEnumModel
 
             self::Page                                  => "总站",
             self::PageHome                              => "首页",
-            74                                          => "公司新闻",
         );
 
         return $transformMap;
@@ -32,6 +31,10 @@ class PageStatEnumModel
         $model = new MenuModel();
         $menu = $model->getAllMenuListMapTitle();
         $transformMap = array_merge($transformMap,$menu);
+        if($key == 74){
+            YafDebug::log($menu);
+            YafDebug::log($transformMap);
+        }
         return $transformMap[$key];
     }
 

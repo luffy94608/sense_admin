@@ -51,6 +51,9 @@ class StatisticsModel extends Halo_Model
                 $tuk = $v['url'].'_uv';
                 $tTime = $v['time'];
                 $tmpTitle = PageStatEnumModel::getPageTitle($tk);
+                if($tk == 74){
+                    YafDebug::log($tmpTitle);
+                }
                 $tmpTitle = $tmpTitle ? $tmpTitle : $tk;
 
                 $list[$tTime][$tpk] = $v['pv'];

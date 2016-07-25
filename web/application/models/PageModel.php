@@ -268,7 +268,10 @@ class PageModel extends Halo_Model
                     //更新link
                     if($tbl_name == 'page_contents')
                     {
-                        $this->updatePageLinks($tmpId,$paramsMap[$tmpId]);
+                        if(array_key_exists($tmpId,$paramsMap))
+                        {
+                            $this->updatePageLinks($tmpId,$paramsMap[$tmpId]);
+                        }
                     }
                     if(in_array(false,$updateStatusArr,true))
                     {

@@ -20,6 +20,7 @@ class PageStatEnumModel
 
             self::Page                                  => "总站",
             self::PageHome                              => "首页",
+            74                                          => "公司新闻",
         );
 
         return $transformMap;

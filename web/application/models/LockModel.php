@@ -26,6 +26,7 @@ class LockModel extends Halo_Model
     public $keyLockMap = array(
         'lock_type_id'=>'lock_type_id',
         'version'=>'version',
+        'shop_url'=>'shop_url',
         'try_status'=>'try_status',
         'pic'=>'pic',
         'description'=>'desc',

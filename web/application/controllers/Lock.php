@@ -224,6 +224,7 @@ class LockController extends BaseController
 
         $params['version']=$this->getLegalParam('version','str');
         $params['lock_type_id']=$this->getLegalParam('type_id','str');
+        $params['shop_url']=$this->getLegalParam('shop_url','str','','');
         $params['try_status']=$this->getLegalParam('status','str');
         $params['download_ids']=$this->getLegalParam('download_ids','raw');
         $params['pic']=$this->getLegalParam('pic','str');

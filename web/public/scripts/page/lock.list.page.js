@@ -12,6 +12,7 @@ $(document).ready(function(){
 
         inputVersion : $('#js_modal_version'),
         inputType : $('#js_modal_type'),
+        inputShopUrl : $('#js_modal_shop_url'),
         inputStatus : $('#js_modal_status'),
         inputDownload : $('#js_modal_download'),
         inputImg : $('#js_modal_img'),
@@ -97,6 +98,7 @@ $(document).ready(function(){
             init.imgPreview.attr('src',pic).removeClass('gone');
 
             init.inputVersion.val(data.version);
+            init.inputShopUrl.val(data.shop_url);
             init.inputType.val(data.lock_type_id);
             if(data.try_status==1){
                 init.inputStatus.prop('checked',true);
@@ -118,6 +120,7 @@ $(document).ready(function(){
             init.imgPreview.addClass('gone').attr('src','');
             init.inputVersion.val('');
             init.inputType.val('');
+            init.inputShopUrl.val('');
             init.inputStatus.prop('checked',false);
             init.inputDownload.select2('val','');
             init.inputImg.val('');
@@ -151,6 +154,7 @@ $(document).ready(function(){
                         id:id,
                         version:$.trim(init.inputVersion.val()),
                         type_id:$.trim(init.inputType.val()),
+                        shop_url:$.trim(init.inputShopUrl.val()),
                         status:init.inputStatus.prop('checked') ? 1 : 0,
                         download_ids:$.trim(init.inputDownload.select2('val')),
                         pic:$.trim(init.inputImg.val()),

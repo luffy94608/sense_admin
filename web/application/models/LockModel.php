@@ -275,7 +275,7 @@ class LockModel extends Halo_Model
         $result = $this->web->delRowByCondition2($this->tbl_name,HaloPdo::condition('id = ?',$id));
         if($result)
         {
-            $this->db->delRowByCondition2('lock_params',HaloPdo::condition('lock_id',$id));
+            $this->db->delRowByCondition2('lock_params',HaloPdo::condition('lock_id = ?',$id));
         }
         return $result;
     }
